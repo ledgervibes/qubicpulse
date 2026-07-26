@@ -1,9 +1,19 @@
-import { QUBIC_RPC_URL } from "../utils/constants";
-import type { TickInfo, WalletBalance } from "../types";
+import { QUBIC_RPC_URL, QUBIC_QUERY_RPC_URL } from "../utils/constants";
+import type { TickInfo, WalletBalance, Transaction } from "../types";
 
 async function fetchRPC<T>(endpoint: string): Promise<T> {
   const res = await fetch(`${QUBIC_RPC_URL}${endpoint}`);
   if (!res.ok) throw new Error(`RPC error: ${res.status}`);
+  return res.json();
+}
+
+async function postQueryRPC<T>(endpoint: string, body: unknown): Promise<T> {
+  const res = await fetch(`${QUBIC_QUERY_RPC_URL}${endpoint}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`Query RPC error: ${res.status}`);
   return res.json();
 }
 
@@ -44,4 +54,22 @@ export async function getStatus(): Promise<{
     status: { currentTick: number; epoch: number };
   }>("/v1/status");
   return data.status;
+}
+
+export async function getTransactions(
+  identity: string,
+  limit: number = 20,
+  offset: number = 0
+): Promise<Transaction[]> {
+  const data = await postQueryRPC<{
+    transactions: Transaction[];
+  }>("/getTransactionsForIdentity", {
+    identity: identity.toUpperCase(),
+    pagination: {
+      offset,
+      size: limit,
+    },
+  });
+
+  return data.transactions ?? [];
 }

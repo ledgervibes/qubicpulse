@@ -7,6 +7,7 @@ import {
   formatAddress,
 } from "../utils/format";
 import { QUBIC_ADDRESS_REGEX } from "../utils/constants";
+import { TransactionHistory } from "../components/portfolio/TransactionHistory";
 import {
   Wallet,
   Plus,
@@ -238,6 +239,10 @@ export function Portfolio() {
                     </div>
                   </div>
                 )}
+                <div className="mt-4 pt-4 border-t border-bg-hover">
+                  <div className="text-xs text-text-muted mb-3">Recent Transactions</div>
+                  <TransactionHistory address={w.address} />
+                </div>
               </div>
             );
           })

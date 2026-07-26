@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Activity, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { NAV_ITEMS, APP_NAME } from "../../utils/constants";
 
@@ -41,9 +41,7 @@ export function Navbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-qubic-cyan/10 text-qubic-cyan group-hover:bg-qubic-cyan/20 transition-colors">
-              <Activity className="w-5 h-5" />
-            </div>
+            <img src="/logo.svg" alt="QubicPulse" className="h-8 w-8" />
             <span className="font-heading text-lg font-semibold text-text-primary">
               {APP_NAME}
             </span>

@@ -73,3 +73,14 @@ export interface ActivityItem {
   label: string;
   timestamp: number;
 }
+
+export interface Transaction {
+  hash: string;
+  source: string;
+  destination: string;
+  amount: number;
+  tickNumber: number;
+  timestamp: string;
+  inputType: number;
+  inputSize: number;
+}

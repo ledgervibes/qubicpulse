@@ -11,6 +11,7 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  CartesianGrid,
 } from "recharts";
 
 export function Defi() {
@@ -123,19 +124,24 @@ export function Defi() {
                     <stop offset="95%" stopColor="#FFDEA1" stopOpacity={0} />
                   </linearGradient>
                 </defs>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#1F2937"
+                  vertical={false}
+                />
                 <XAxis
                   dataKey="date"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#6B7280", fontSize: 12 }}
+                  tick={{ fill: "#6B7280", fontSize: 11 }}
                   interval="preserveStartEnd"
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#6B7280", fontSize: 12 }}
+                  tick={{ fill: "#6B7280", fontSize: 11 }}
                   tickFormatter={(v: number) => `$${(v / 1000000).toFixed(1)}M`}
-                  width={60}
+                  width={55}
                 />
                 <Tooltip
                   contentStyle={{
@@ -144,12 +150,14 @@ export function Defi() {
                     borderRadius: "8px",
                     color: "#F9FAFB",
                     fontSize: "13px",
+                    padding: "8px 12px",
                   }}
                   formatter={(value) => [
                     formatCurrency(Number(value)),
                     "Volume",
                   ]}
-                  labelStyle={{ color: "#9CA3AF" }}
+                  labelStyle={{ color: "#9CA3AF", marginBottom: "4px" }}
+                  cursor={{ stroke: "#FFDEA1", strokeWidth: 1, strokeDasharray: "4 4" }}
                 />
                 <Area
                   type="monotone"
@@ -157,6 +165,8 @@ export function Defi() {
                   stroke="#FFDEA1"
                   strokeWidth={2}
                   fill="url(#volGradient)"
+                  animationDuration={1000}
+                  animationEasing="ease-in-out"
                 />
               </AreaChart>
             </ResponsiveContainer>

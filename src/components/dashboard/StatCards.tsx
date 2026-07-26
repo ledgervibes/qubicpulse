@@ -1,9 +1,15 @@
 import { usePriceStore } from "../../stores/priceStore";
 import { formatCurrency, formatPercent } from "../../utils/format";
-import { TrendingUp, TrendingDown, DollarSign, Activity } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Activity, BarChart3 } from "lucide-react";
+import { Sparkline } from "../ui/Sparkline";
 
 export function StatCards() {
   const price = usePriceStore((s) => s.price);
+  const history = usePriceStore((s) => s.history);
+  const loading = usePriceStore((s) => s.loading);
+
+  const sparkData = history?.prices?.map(([, p]) => p) ?? [];
+  const isPositive = (price?.usd_24h_change ?? 0) >= 0;
 
   const cards = [
     {
@@ -17,7 +23,7 @@ export function StatCards() {
       value: price ? formatPercent(price.usd_24h_change) : "—",
       change: price?.usd_24h_change,
       icon:
-        (price?.usd_24h_change ?? 0) >= 0 ? (
+        isPositive ? (
           <TrendingUp className="w-5 h-5" />
         ) : (
           <TrendingDown className="w-5 h-5" />
@@ -25,15 +31,33 @@ export function StatCards() {
     },
     {
       label: "Market Cap",
-      value: price ? formatCurrency(price.usd_market_cap, "USD") : "—",
-      icon: <Activity className="w-5 h-5" />,
+      value: price ? formatCurrency(price.usd_market_cap) : "—",
+      icon: <BarChart3 className="w-5 h-5" />,
     },
     {
-      label: "BTC Price",
-      value: price ? `${price.btc.toFixed(12)} BTC` : "—",
-      icon: <span className="text-sm font-bold">₿</span>,
+      label: "7d Trend",
+      value: sparkData.length > 0 ? "" : "—",
+      icon: <Activity className="w-5 h-5" />,
+      sparkline: sparkData,
     },
   ];
+
+  if (loading && !price) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={i}
+            className="rounded-xl border border-bg-hover bg-bg-surface p-5 animate-pulse"
+          >
+            <div className="h-4 w-24 bg-bg-elevated rounded mb-3" />
+            <div className="h-7 w-32 bg-bg-elevated rounded mb-2" />
+            <div className="h-3 w-16 bg-bg-elevated rounded" />
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -58,6 +82,16 @@ export function StatCards() {
               }`}
             >
               {formatPercent(card.change)}
+            </div>
+          )}
+          {card.sparkline && card.sparkline.length > 0 && (
+            <div className="mt-2">
+              <Sparkline
+                data={card.sparkline}
+                width={120}
+                height={32}
+                positive={isPositive}
+              />
             </div>
           )}
         </div>
