@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme {
+  --color-qubic-cyan: #25CAD9;
+  --color-qubic-cyan-light: #61F0FE;
+  --color-qubic-cyan-dark: #1A8F99;
+  --color-qubic-gold: #FFDEA1;
+  --color-qubic-gold-dark: #FDD386;
+  --color-qubic-gold-subtle: #FFF8EB;
+
+  --color-bg-deep: #0A0E14;
+  --color-bg-surface: #111827;
+  --color-bg-elevated: #1F2937;
+  --color-bg-hover: #374151;
+
+  --color-text-primary: #F9FAFB;
+  --color-text-secondary: #D1D5DB;
+  --color-text-muted: #9CA3AF;
+  --color-text-disabled: #6B7280;
+
+  --color-success: #10B981;
+  --color-danger: #EF4444;
+  --color-warning: #F59E0B;
+  --color-info: #3B82F6;
+
+  --font-heading: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "Fragment Mono", monospace;
+}
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-bg-deep);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-deep);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-bg-hover);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-disabled);
+  }
+}
