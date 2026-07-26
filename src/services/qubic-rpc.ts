@@ -51,9 +51,12 @@ export async function getStatus(): Promise<{
   epoch: number;
 }> {
   const data = await fetchRPC<{
-    status: { currentTick: number; epoch: number };
+    lastProcessedTick: { tickNumber: number; epoch: number };
   }>("/v1/status");
-  return data.status;
+  return {
+    currentTick: data.lastProcessedTick.tickNumber,
+    epoch: data.lastProcessedTick.epoch,
+  };
 }
 
 export async function getTransactions(
