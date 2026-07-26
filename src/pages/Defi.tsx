@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { usePriceStore } from "../stores/priceStore";
 import { formatCurrency, formatPercent } from "../utils/format";
-import { TrendingUp, TrendingDown, ExternalLink, BarChart3 } from "lucide-react";
+import { TrendingUp, TrendingDown, ExternalLink, BarChart3, Clock, Layers } from "lucide-react";
 import type { PriceHistory } from "../types";
 import { getPriceHistory } from "../services/coingecko";
+import * as rpc from "../services/qubic-rpc";
 import {
   AreaChart,
   Area,
@@ -17,9 +18,11 @@ import {
 export function Defi() {
   const price = usePriceStore((s) => s.price);
   const [volumeHistory, setVolumeHistory] = useState<PriceHistory | null>(null);
+  const [tickInfo, setTickInfo] = useState<{ currentTick: number; epoch: number } | null>(null);
 
   useEffect(() => {
     getPriceHistory(7).then(setVolumeHistory).catch(() => {});
+    rpc.getStatus().then(setTickInfo).catch(() => {});
   }, []);
 
   const volumeData =
@@ -55,14 +58,14 @@ export function Defi() {
         ),
     },
     {
-      label: "BTC Ratio",
-      value: price ? `${price.btc.toFixed(12)} BTC` : "—",
-      icon: <span className="text-sm font-bold">₿</span>,
+      label: "Current Tick",
+      value: tickInfo ? tickInfo.currentTick.toLocaleString() : "—",
+      icon: <Clock className="w-4 h-4" />,
     },
     {
-      label: "ETH Ratio",
-      value: price ? `${price.eth.toFixed(10)} ETH` : "—",
-      icon: <span className="text-sm font-bold">Ξ</span>,
+      label: "Epoch",
+      value: tickInfo ? tickInfo.epoch.toString() : "—",
+      icon: <Layers className="w-4 h-4" />,
     },
   ];
 

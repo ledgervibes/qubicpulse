@@ -6,6 +6,14 @@ export function formatBalance(quants: number): string {
 }
 
 export function formatCurrency(value: number, currency = "USD"): string {
+  if (value > 0 && value < 0.01) {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 10,
+    }).format(value);
+  }
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency,

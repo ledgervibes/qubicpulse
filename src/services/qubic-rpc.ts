@@ -38,11 +38,11 @@ export async function getBalance(publicId: string): Promise<WalletBalance> {
   const b = data.balance;
   return {
     address: publicId,
-    balance: b.balance,
-    incomingAmount: b.incomingAmount,
-    outgoingAmount: b.outgoingAmount,
-    numberOfTransfers: b.numberOfTransfers,
-    lastActivityTick: b.latestIncomingTransferTick,
+    balance: Number(b.balance),
+    incomingAmount: Number(b.incomingAmount),
+    outgoingAmount: Number(b.outgoingAmount),
+    numberOfTransfers: Number(b.numberOfTransfers),
+    lastActivityTick: Number(b.latestIncomingTransferTick),
   };
 }
 

@@ -6,7 +6,6 @@
       <stop offset="100%" stop-color="#25CAD9" stop-opacity="0.3"/>
     </linearGradient>
   </defs>
-  <rect width="40" height="40" rx="8" fill="#0A0E14"/>
   <path d="M5 20 L10 20 L12.5 12.5 L17.5 27.5 L22.5 10 L27.5 30 L30 20 L35 20" 
         stroke="url(#pulseGrad)" 
         stroke-width="2.5" 
