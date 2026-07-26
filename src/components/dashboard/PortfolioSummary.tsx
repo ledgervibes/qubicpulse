@@ -1,7 +1,7 @@
 import { useWalletStore } from "../../stores/walletStore";
 import { usePriceStore } from "../../stores/priceStore";
 import { formatBalance, formatCurrency, formatAddress } from "../../utils/format";
-import { Wallet, ArrowUpRight, ArrowDownLeft } from "lucide-react";
+import { Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export function PortfolioSummary() {
@@ -74,18 +74,10 @@ export function PortfolioSummary() {
                   </div>
                   <div className="text-right">
                     <div className="text-sm font-medium text-text-primary">
-                      {bal ? formatBalance(bal.balance) : "—"}
+                      {bal ? formatBalance(bal.balance) : "—"} Q
                     </div>
-                    <div className="flex items-center gap-1 text-xs">
-                      {bal && bal.numberOfTransfers > 0 && (
-                        <>
-                          <ArrowDownLeft className="w-3 h-3 text-success" />
-                          <ArrowUpRight className="w-3 h-3 text-danger" />
-                          <span className="text-text-muted">
-                            {bal.numberOfTransfers}
-                          </span>
-                        </>
-                      )}
+                    <div className="text-xs text-qubic-gold">
+                      {bal && price ? formatCurrency(bal.balance * price.usd) : "—"}
                     </div>
                   </div>
                 </div>

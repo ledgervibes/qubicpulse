@@ -1,28 +1,67 @@
+import { useEffect, useState } from "react";
 import { usePriceStore } from "../stores/priceStore";
 import { formatCurrency, formatPercent } from "../utils/format";
-import { TrendingUp, TrendingDown, ExternalLink } from "lucide-react";
+import { TrendingUp, TrendingDown, ExternalLink, BarChart3 } from "lucide-react";
+import type { PriceHistory } from "../types";
+import { getPriceHistory } from "../services/coingecko";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 export function Defi() {
   const price = usePriceStore((s) => s.price);
+  const [volumeHistory, setVolumeHistory] = useState<PriceHistory | null>(null);
+
+  useEffect(() => {
+    getPriceHistory(7).then(setVolumeHistory).catch(() => {});
+  }, []);
+
+  const volumeData =
+    volumeHistory?.total_volumes?.map(([timestamp, vol]) => ({
+      date: new Date(timestamp).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
+      volume: vol,
+    })) ?? [];
 
   const stats = [
     {
       label: "Price",
       value: price ? formatCurrency(price.usd) : "—",
       change: price?.usd_24h_change,
+      icon: <span className="text-sm font-bold">$</span>,
     },
     {
       label: "Market Cap",
       value: price ? formatCurrency(price.usd_market_cap) : "—",
+      icon: <BarChart3 className="w-4 h-4" />,
     },
     {
       label: "24h Change",
       value: price ? formatPercent(price.usd_24h_change) : "—",
       change: price?.usd_24h_change,
+      icon:
+        (price?.usd_24h_change ?? 0) >= 0 ? (
+          <TrendingUp className="w-4 h-4" />
+        ) : (
+          <TrendingDown className="w-4 h-4" />
+        ),
     },
     {
       label: "BTC Ratio",
       value: price ? `${price.btc.toFixed(12)} BTC` : "—",
+      icon: <span className="text-sm font-bold">₿</span>,
+    },
+    {
+      label: "ETH Ratio",
+      value: price ? `${price.eth.toFixed(10)} ETH` : "—",
+      icon: <span className="text-sm font-bold">Ξ</span>,
     },
   ];
 
@@ -33,17 +72,22 @@ export function Defi() {
           DeFi
         </h1>
         <p className="text-sm text-text-muted mt-1">
-          Qubic ecosystem overview
+          Qubic ecosystem market data
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="rounded-xl border border-bg-hover bg-bg-surface p-5"
+            className="rounded-xl border border-bg-hover bg-bg-surface p-5 hover:border-qubic-cyan/30 hover:shadow-[0_0_20px_rgba(37,202,217,0.08)] transition-all duration-200"
           >
-            <div className="text-sm text-text-muted mb-1">{stat.label}</div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-text-muted">{stat.label}</span>
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-qubic-cyan/10 text-qubic-cyan">
+                {stat.icon}
+              </div>
+            </div>
             <div className="text-lg font-heading font-semibold text-text-primary">
               {stat.value}
             </div>
@@ -64,6 +108,61 @@ export function Defi() {
           </div>
         ))}
       </div>
+
+      {volumeData.length > 0 && (
+        <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
+          <h3 className="font-heading font-semibold text-text-primary mb-4">
+            7-Day Volume
+          </h3>
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={volumeData}>
+                <defs>
+                  <linearGradient id="volGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#FFDEA1" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#FFDEA1" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis
+                  dataKey="date"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#6B7280", fontSize: 12 }}
+                  interval="preserveStartEnd"
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#6B7280", fontSize: 12 }}
+                  tickFormatter={(v: number) => `$${(v / 1000000).toFixed(1)}M`}
+                  width={60}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "#1F2937",
+                    border: "1px solid #374151",
+                    borderRadius: "8px",
+                    color: "#F9FAFB",
+                    fontSize: "13px",
+                  }}
+                  formatter={(value) => [
+                    formatCurrency(Number(value)),
+                    "Volume",
+                  ]}
+                  labelStyle={{ color: "#9CA3AF" }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="volume"
+                  stroke="#FFDEA1"
+                  strokeWidth={2}
+                  fill="url(#volGradient)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
 
       <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
         <h3 className="font-heading font-semibold text-text-primary mb-4">
@@ -90,6 +189,16 @@ export function Defi() {
               name: "Qubic Wallet",
               desc: "Official web wallet",
               url: "https://wallet.qubic.org",
+            },
+            {
+              name: "Qubic Docs",
+              desc: "Developer documentation",
+              url: "https://docs.qubic.org",
+            },
+            {
+              name: "CoinGecko",
+              desc: "QUBIC market data",
+              url: "https://www.coingecko.com/en/coins/qubic-network",
             },
           ].map((item) => (
             <a

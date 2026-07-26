@@ -96,7 +96,7 @@ export function Settings() {
             </button>
           </div>
           <a
-            href={`https://explorer.qubic.org/address/${TIP_ADDRESS}`}
+            href={`https://explorer.qubic.org/network/address/${TIP_ADDRESS}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 mt-2 text-xs text-text-muted hover:text-qubic-cyan transition-colors"
