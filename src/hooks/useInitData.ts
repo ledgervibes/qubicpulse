@@ -3,6 +3,7 @@ import { useWalletStore } from "../stores/walletStore";
 import { usePriceStore } from "../stores/priceStore";
 import { useAlertStore } from "../stores/alertStore";
 import { useNotificationStore } from "../stores/notificationStore";
+import { useSummaryScheduler } from "./useSummaryScheduler";
 import { POLL_INTERVAL_MS, PRICE_POLL_INTERVAL_MS } from "../utils/constants";
 
 export function useInitData() {
@@ -12,6 +13,8 @@ export function useInitData() {
   const fetchHistory = usePriceStore((s) => s.fetchHistory);
   const loadAlerts = useAlertStore((s) => s.loadAlerts);
   const loadTelegram = useNotificationStore((s) => s.loadTelegram);
+
+  useSummaryScheduler();
 
   useEffect(() => {
     loadWallets();
