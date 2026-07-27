@@ -173,8 +173,11 @@ export function Settings() {
           </div>
         </div>
         <div className="text-sm text-text-secondary space-y-2">
+          <p className="font-medium text-text-primary">
+            {APP_NAME} — Your Qubic Command Center.
+          </p>
           <p>
-            {APP_NAME} is an all-in-one dashboard for the Qubic network.
+            An all-in-one dashboard for the Qubic network.
             Track portfolios, set alerts, monitor transactions, and explore
             DeFi — all in one place.
           </p>
@@ -187,6 +190,14 @@ export function Settings() {
               className="text-xs text-text-muted hover:text-qubic-cyan transition-colors flex items-center gap-1"
             >
               GitHub <ExternalLink className="w-3 h-3" />
+            </a>
+            <a
+              href="https://x.com/QubicPulse"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-text-muted hover:text-qubic-cyan transition-colors flex items-center gap-1"
+            >
+              X/Twitter <ExternalLink className="w-3 h-3" />
             </a>
             <a
               href="https://docs.qubic.org"
