@@ -1,48 +1,51 @@
 # QubicPulse — Roadmap
 
-## Phase 1 — Core MVP (Week 1-2)
-- [x] Step 1:  Init project (Vite + React + TS)
-- [x] Step 2:  Setup TailwindCSS + Qubic theme
-- [x] Step 3:  ESLint + Prettier + Vitest
-- [x] Step 4:  Zustand + localStorage service
-- [x] Step 5:  Layout (Navbar + dark theme)
-- [x] Step 6:  Qubic RPC service layer
-- [x] Step 7:  CoinGecko service layer
-- [x] Step 8:  Dashboard page (stat cards, price chart, portfolio summary)
-- [x] Step 9:  Portfolio page (multi-wallet, add/remove)
-- [x] Step 10: Settings page (tip jar, export/import, about)
-- [x] Step 11: GitHub Actions deploy
-- [x] Step 12: README.md + LICENSE + ROADMAP.md
-- [x] Step 13: Build passes, deployed to GitHub Pages
-
-## Phase 2 — Alerts & Notifications (Week 3-4)
-- [ ] Price alert system (set/edit/delete)
-- [ ] Browser Push Notification (Service Worker)
-- [ ] Wallet TX monitoring (polling balance changes)
-- [ ] TX notification (amount, direction, timestamp)
-- [ ] Telegram bot (@qubicpulsebot)
-- [ ] Telegram connection flow (Settings page)
-- [ ] Telegram notification sending
-- [ ] Alert history log
-- [ ] → Submit to Incubation Program
-
-## Phase 3 — DeFi Dashboard (Week 5-6)
-- [ ] QX contract query service
-- [ ] Asset listing & prices
-- [ ] Order book visualization (bid/ask)
-- [ ] Volume & liquidity display
-- [ ] Top gainers/losers
-- [ ] DeFi overview page
-
-## Phase 4 — Polish & Launch (Week 7-8)
-- [ ] UI/UX refinement
-- [ ] Mobile responsive (full)
-- [ ] Light mode theme
-- [ ] Theme toggle (dark/light/system)
-- [ ] Testing (Vitest + React Testing Library)
-- [ ] Custom .dev domain ($12)
-- [ ] Final Incubation submission
-- [ ] Community launch
+> Building the all-in-one dashboard for the Qubic ecosystem.
 
 ---
-Last updated: 2026-07-26
+
+## Phase 1 — Core MVP ✅
+
+- Dashboard with live QUBIC price, market data, and price charts
+- Multi-wallet portfolio tracking with balance and transaction history
+- Price alerts with browser notifications
+- DeFi dashboard with market overview and network stats
+- Multi-API price system (CoinGecko, CoinPaprika, CoinMarketCap)
+- Cloudflare Pages deployment
+
+---
+
+## Phase 2 — Telegram Bot & Smart Alerts 🔄
+
+- Telegram bot (@qubic_pulse_bot) with wallet management
+- Real-time transaction notifications (QUBIC + multi-token)
+- Price alerts with browser + Telegram delivery
+- Multi-token portfolio support via Qubic Event Logs API
+- Compact portfolio layout with token holdings
+
+---
+
+## Phase 3 — DeFi Intelligence ⏳
+
+- QX contract integration for real-time order book data
+- Multi-token price tracking from QX DEX
+- Advanced DeFi analytics (TVL, volume trends, liquidity)
+- Portfolio multi-token price valuation
+
+---
+
+## Phase 4 — Polish & Growth ⏳
+
+- Light mode theme with system preference detection
+- Mobile-first responsive optimization
+- Comprehensive test coverage
+- Custom domain (qubicpulse.dev)
+- Incubation Program submission
+- Community launch
+
+---
+
+**Live**: [qubicpulse.pages.dev](https://qubicpulse.pages.dev)  
+**GitHub**: [github.com/sna4an/qubicpulse](https://github.com/sna4an/qubicpulse)  
+**Telegram**: [@qubic_pulse_bot](https://t.me/qubic_pulse_bot)  
+**Last updated**: 2026-07-28

@@ -158,27 +158,40 @@ export async function getAssetHoldings(address: string): Promise<Array<{
   for (const log of incoming) {
     if (!log.assetPossessionChange) continue;
     const { assetName, assetIssuer, numberOfShares, destination } = log.assetPossessionChange;
+    
+    // Strict validation
+    if (!assetName || assetName.trim() === "") continue;
     if (destination.toUpperCase() !== addr) continue;
+    const shares = Number(numberOfShares);
+    if (isNaN(shares) || shares <= 0) continue;
+    
     const existing = holdings.get(assetName) || { assetIssuer, balance: 0 };
-    existing.balance += Number(numberOfShares);
+    existing.balance += shares;
     holdings.set(assetName, existing);
   }
 
   for (const log of outgoing) {
     if (!log.assetPossessionChange) continue;
     const { assetName, numberOfShares, source } = log.assetPossessionChange;
+    
+    // Strict validation
+    if (!assetName || assetName.trim() === "") continue;
     if (source.toUpperCase() !== addr) continue;
+    const shares = Number(numberOfShares);
+    if (isNaN(shares) || shares <= 0) continue;
+    
     const existing = holdings.get(assetName);
     if (existing) {
-      existing.balance -= Number(numberOfShares);
+      existing.balance -= shares;
     }
   }
 
+  // Only return tokens with positive balance
   return Array.from(holdings.entries())
     .map(([assetName, { assetIssuer, balance }]) => ({
       assetName,
       assetIssuer,
-      balance,
+      balance: Math.max(0, balance),
     }))
     .filter((h) => h.balance > 0);
 }
