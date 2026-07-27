@@ -14,8 +14,6 @@ import {
   BellRing,
   Clock,
   BarChart3,
-  CheckCircle,
-  Send,
 } from "lucide-react";
 
 const ALERT_TYPES = [
@@ -145,42 +143,6 @@ export function Alerts() {
           >
             Enable
           </button>
-        </div>
-      )}
-
-      {connected && (
-        <div className="rounded-xl border border-success/30 bg-success/10 p-4 flex items-center gap-3">
-          <CheckCircle className="w-5 h-5 text-success" />
-          <div>
-            <div className="text-sm font-medium text-text-primary">
-              Telegram Connected
-            </div>
-            <div className="text-xs text-text-muted">
-              Alerts will be sent to your Telegram (@qubicpulsebot)
-            </div>
-          </div>
-        </div>
-      )}
-
-      {!connected && (
-        <div className="rounded-xl border border-info/30 bg-info/10 p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Send className="w-5 h-5 text-info" />
-            <div>
-              <div className="text-sm font-medium text-text-primary">
-                Connect Telegram for Mobile Alerts
-              </div>
-              <div className="text-xs text-text-muted">
-                Get notified on your phone when alerts trigger
-              </div>
-            </div>
-          </div>
-          <a
-            href="/settings"
-            className="px-4 py-2 rounded-lg bg-gradient-to-r from-info to-info/80 text-white font-medium text-sm shadow-[0_4px_14px_rgba(59,130,246,0.3)] hover:shadow-[0_6px_20px_rgba(59,130,246,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-          >
-            Connect
-          </a>
         </div>
       )}
 

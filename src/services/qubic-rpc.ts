@@ -123,25 +123,42 @@ export async function getEventLogs(
   return data.eventLogs ?? [];
 }
 
+async function getEventLogsPaginated(
+  filters: Record<string, string>,
+  maxSize: number = 1000
+): Promise<EventLog[]> {
+  const allLogs: EventLog[] = [];
+  let offset = 0;
+  const batchSize = 100;
+
+  while (offset < maxSize) {
+    const batch = await getEventLogs(filters, batchSize, offset);
+    if (batch.length === 0) break;
+    allLogs.push(...batch);
+    offset += batchSize;
+  }
+
+  return allLogs;
+}
+
 export async function getAssetHoldings(address: string): Promise<Array<{
   assetName: string;
   assetIssuer: string;
   balance: number;
 }>> {
-  const incoming = await getEventLogs(
-    { destination: address.toUpperCase(), logType: "3" },
-    100
-  );
-  const outgoing = await getEventLogs(
-    { source: address.toUpperCase(), logType: "3" },
-    100
-  );
+  const addr = address.toUpperCase();
+
+  const [incoming, outgoing] = await Promise.all([
+    getEventLogsPaginated({ destination: addr, logType: "3" }, 1000),
+    getEventLogsPaginated({ source: addr, logType: "3" }, 1000),
+  ]);
 
   const holdings = new Map<string, { assetIssuer: string; balance: number }>();
 
   for (const log of incoming) {
     if (!log.assetPossessionChange) continue;
-    const { assetName, assetIssuer, numberOfShares } = log.assetPossessionChange;
+    const { assetName, assetIssuer, numberOfShares, destination } = log.assetPossessionChange;
+    if (destination.toUpperCase() !== addr) continue;
     const existing = holdings.get(assetName) || { assetIssuer, balance: 0 };
     existing.balance += Number(numberOfShares);
     holdings.set(assetName, existing);
@@ -149,7 +166,8 @@ export async function getAssetHoldings(address: string): Promise<Array<{
 
   for (const log of outgoing) {
     if (!log.assetPossessionChange) continue;
-    const { assetName, numberOfShares } = log.assetPossessionChange;
+    const { assetName, numberOfShares, source } = log.assetPossessionChange;
+    if (source.toUpperCase() !== addr) continue;
     const existing = holdings.get(assetName);
     if (existing) {
       existing.balance -= Number(numberOfShares);
