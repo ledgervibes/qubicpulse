@@ -84,3 +84,31 @@ export interface Transaction {
   inputType: number;
   inputSize: number;
 }
+
+export interface EventLog {
+  epoch: number;
+  tickNumber: number;
+  timestamp: string;
+  transactionHash: string;
+  logType: number;
+  logId: string;
+  quTransfer?: {
+    source: string;
+    destination: string;
+    amount: string;
+  };
+  assetPossessionChange?: {
+    source: string;
+    destination: string;
+    assetIssuer: string;
+    assetName: string;
+    numberOfShares: string;
+  };
+  assetOwnershipChange?: {
+    source: string;
+    destination: string;
+    assetIssuer: string;
+    assetName: string;
+    numberOfShares: string;
+  };
+}

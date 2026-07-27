@@ -76,3 +76,91 @@ export async function getTransactions(
 
   return data.transactions ?? [];
 }
+
+export interface EventLog {
+  epoch: number;
+  tickNumber: number;
+  timestamp: string;
+  transactionHash: string;
+  logType: number;
+  logId: string;
+  quTransfer?: {
+    source: string;
+    destination: string;
+    amount: string;
+  };
+  assetPossessionChange?: {
+    source: string;
+    destination: string;
+    assetIssuer: string;
+    assetName: string;
+    numberOfShares: string;
+  };
+  assetOwnershipChange?: {
+    source: string;
+    destination: string;
+    assetIssuer: string;
+    assetName: string;
+    numberOfShares: string;
+  };
+}
+
+export async function getEventLogs(
+  filters: Record<string, string>,
+  limit: number = 50,
+  offset: number = 0
+): Promise<EventLog[]> {
+  const data = await postQueryRPC<{
+    eventLogs: EventLog[];
+  }>("/getEventLogs", {
+    filters,
+    pagination: {
+      offset,
+      size: limit,
+    },
+  });
+
+  return data.eventLogs ?? [];
+}
+
+export async function getAssetHoldings(address: string): Promise<Array<{
+  assetName: string;
+  assetIssuer: string;
+  balance: number;
+}>> {
+  const incoming = await getEventLogs(
+    { destination: address.toUpperCase(), logType: "3" },
+    100
+  );
+  const outgoing = await getEventLogs(
+    { source: address.toUpperCase(), logType: "3" },
+    100
+  );
+
+  const holdings = new Map<string, { assetIssuer: string; balance: number }>();
+
+  for (const log of incoming) {
+    if (!log.assetPossessionChange) continue;
+    const { assetName, assetIssuer, numberOfShares } = log.assetPossessionChange;
+    const existing = holdings.get(assetName) || { assetIssuer, balance: 0 };
+    existing.balance += Number(numberOfShares);
+    holdings.set(assetName, existing);
+  }
+
+  for (const log of outgoing) {
+    if (!log.assetPossessionChange) continue;
+    const { assetName, numberOfShares } = log.assetPossessionChange;
+    const existing = holdings.get(assetName);
+    if (existing) {
+      existing.balance -= Number(numberOfShares);
+    }
+  }
+
+  return Array.from(holdings.entries())
+    .map(([assetName, { assetIssuer, balance }]) => ({
+      assetName,
+      assetIssuer,
+      balance,
+    }))
+    .filter((h) => h.balance > 0);
+}

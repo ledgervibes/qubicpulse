@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { TIP_ADDRESS, APP_NAME } from "../utils/constants";
+import { TIP_ADDRESS, APP_NAME, TELEGRAM_BOT_USERNAME } from "../utils/constants";
 import * as storage from "../services/storage";
-import { TelegramConnect } from "../components/settings/TelegramConnect";
-import { NotificationPreferences } from "../components/settings/NotificationPreferences";
 import {
   Settings as SettingsIcon,
   Download,
@@ -11,6 +9,7 @@ import {
   Copy,
   Check,
   ExternalLink,
+  Send,
 } from "lucide-react";
 
 export function Settings() {
@@ -66,8 +65,33 @@ export function Settings() {
         </div>
       )}
 
-      <TelegramConnect />
-      <NotificationPreferences />
+      <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-info/10 flex items-center justify-center text-info">
+              <Send className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="font-heading font-semibold text-text-primary">
+                Telegram Notifications
+              </h3>
+              <p className="text-xs text-text-muted">
+                Get alerts on your phone via Telegram
+              </p>
+            </div>
+          </div>
+          <a
+            href={`https://t.me/${TELEGRAM_BOT_USERNAME}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-info to-info/80 text-white font-medium text-sm shadow-[0_4px_14px_rgba(59,130,246,0.3)] hover:shadow-[0_6px_20px_rgba(59,130,246,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+          >
+            <Send className="w-4 h-4" />
+            Connect
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        </div>
+      </div>
 
       <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
         <div className="flex items-center gap-3 mb-4">
