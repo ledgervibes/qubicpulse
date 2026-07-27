@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useWalletStore } from "../stores/walletStore";
 import { usePriceStore } from "../stores/priceStore";
+import { useAlertStore } from "../stores/alertStore";
+import { useNotificationStore } from "../stores/notificationStore";
 import { POLL_INTERVAL_MS, PRICE_POLL_INTERVAL_MS } from "../utils/constants";
 
 export function useInitData() {
@@ -8,9 +10,13 @@ export function useInitData() {
   const refreshBalances = useWalletStore((s) => s.refreshBalances);
   const fetchPrice = usePriceStore((s) => s.fetchPrice);
   const fetchHistory = usePriceStore((s) => s.fetchHistory);
+  const loadAlerts = useAlertStore((s) => s.loadAlerts);
+  const loadTelegram = useNotificationStore((s) => s.loadTelegram);
 
   useEffect(() => {
     loadWallets();
+    loadAlerts();
+    loadTelegram();
     fetchPrice();
     fetchHistory(7);
   }, []);

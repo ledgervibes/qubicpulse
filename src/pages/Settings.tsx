@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { TIP_ADDRESS, APP_NAME } from "../utils/constants";
 import * as storage from "../services/storage";
+import { TelegramConnect } from "../components/settings/TelegramConnect";
+import { NotificationPreferences } from "../components/settings/NotificationPreferences";
 import {
   Settings as SettingsIcon,
   Download,
@@ -63,6 +65,9 @@ export function Settings() {
           {message}
         </div>
       )}
+
+      <TelegramConnect />
+      <NotificationPreferences />
 
       <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
         <div className="flex items-center gap-3 mb-4">
@@ -169,7 +174,7 @@ export function Settings() {
             <h3 className="font-heading font-semibold text-text-primary">
               About {APP_NAME}
             </h3>
-            <p className="text-xs text-text-muted">v0.1.0 • Phase 1</p>
+            <p className="text-xs text-text-muted">v0.2.0 • Phase 2</p>
           </div>
         </div>
         <div className="text-sm text-text-secondary space-y-2">

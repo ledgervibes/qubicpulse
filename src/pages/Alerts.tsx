@@ -1,28 +1,53 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { usePriceStore } from "../stores/priceStore";
+import { useNotificationStore } from "../stores/notificationStore";
+import { useAlertStore } from "../stores/alertStore";
 import { formatCurrency } from "../utils/format";
-import { Bell, Plus, Trash2, TrendingUp, TrendingDown, BellRing } from "lucide-react";
-import type { PriceAlert } from "../types";
-import * as storage from "../services/storage";
+import { sendPriceAlert } from "../services/telegram";
 import * as notif from "../services/notification";
+import {
+  Bell,
+  Plus,
+  Trash2,
+  TrendingUp,
+  TrendingDown,
+  BellRing,
+  Clock,
+  BarChart3,
+} from "lucide-react";
+
+const ALERT_TYPES = [
+  { id: "price_above", label: "Price Above", icon: TrendingUp, color: "success" },
+  { id: "price_below", label: "Price Below", icon: TrendingDown, color: "danger" },
+  { id: "price_change", label: "Price Change %", icon: BarChart3, color: "warning" },
+  { id: "volume_spike", label: "Volume Spike", icon: BarChart3, color: "info" },
+];
 
 export function Alerts() {
   const price = usePriceStore((s) => s.price);
-  const [alerts, setAlerts] = useState<PriceAlert[]>(() =>
-    storage.getItem<PriceAlert[]>("price_alerts", [])
-  );
+  const alerts = useAlertStore((s) => s.alerts);
+  const history = useAlertStore((s) => s.history);
+  const loadAlerts = useAlertStore((s) => s.loadAlerts);
+  const addAlert = useAlertStore((s) => s.addAlert);
+  const removeAlert = useAlertStore((s) => s.removeAlert);
+  const toggleAlert = useAlertStore((s) => s.toggleAlert);
+  const addToHistory = useAlertStore((s) => s.addToHistory);
+
+  const telegramChatId = useNotificationStore((s) => s.telegramChatId);
+  const connected = useNotificationStore((s) => s.connected);
+
   const [showAdd, setShowAdd] = useState(false);
   const [targetPrice, setTargetPrice] = useState("");
   const [condition, setCondition] = useState<"above" | "below">("above");
+  const [alertType, setAlertType] = useState("price_above");
   const [notifEnabled, setNotifEnabled] = useState(
     notif.isSupported() && Notification.permission === "granted"
   );
   const triggeredRef = useRef<Set<string>>(new Set());
 
-  const saveAlerts = (updated: PriceAlert[]) => {
-    setAlerts(updated);
-    storage.setItem("price_alerts", updated);
-  };
+  useEffect(() => {
+    loadAlerts();
+  }, [loadAlerts]);
 
   const handleEnableNotif = async () => {
     const result = await notif.requestPermission();
@@ -33,31 +58,13 @@ export function Alerts() {
     const num = parseFloat(targetPrice);
     if (isNaN(num) || num <= 0) return;
 
-    const alert: PriceAlert = {
-      id: crypto.randomUUID(),
-      condition,
+    addAlert({
+      condition: alertType.includes("above") ? "above" : "below",
       targetPrice: num,
       active: true,
-      createdAt: Date.now(),
-    };
-    saveAlerts([...alerts, alert]);
+    });
     setTargetPrice("");
     setShowAdd(false);
-  };
-
-  const handleDelete = (id: string) => {
-    saveAlerts(alerts.filter((a) => a.id !== id));
-    triggeredRef.current.delete(id);
-  };
-
-  const toggleAlert = (id: string) => {
-    const updated = alerts.map((a) =>
-      a.id === id ? { ...a, active: !a.active } : a
-    );
-    saveAlerts(updated);
-    if (updated.find((a) => a.id === id)?.active === false) {
-      triggeredRef.current.delete(id);
-    }
   };
 
   const checkAlerts = useCallback(() => {
@@ -74,17 +81,24 @@ export function Alerts() {
 
       if (triggered) {
         triggeredRef.current.add(alert.id);
-        const title = `QUBIC ${alert.condition === "above" ? "Above" : "Below"} ${formatCurrency(alert.targetPrice)}`;
-        const body = `Current price: ${formatCurrency(currentPrice)}`;
-        notif.sendNotification(title, body);
 
-        const updated = alerts.map((a) =>
-          a.id === alert.id ? { ...a, triggeredAt: Date.now() } : a
-        );
-        saveAlerts(updated);
+        const message = `QUBIC ${alert.condition === "above" ? "above" : "below"} ${formatCurrency(alert.targetPrice)} - Current: ${formatCurrency(currentPrice)}`;
+
+        notif.sendNotification("QubicPulse Price Alert", message);
+
+        if (connected && telegramChatId) {
+          sendPriceAlert(telegramChatId, alert.condition, alert.targetPrice, currentPrice).catch(console.error);
+        }
+
+        addToHistory({
+          alertId: alert.id,
+          message,
+          sentToTelegram: connected,
+          sentToBrowser: notifEnabled,
+        });
       }
     });
-  }, [price, alerts]);
+  }, [price, alerts, connected, telegramChatId, notifEnabled, addToHistory]);
 
   useEffect(() => {
     checkAlerts();
@@ -103,7 +117,7 @@ export function Alerts() {
         </div>
         <button
           onClick={() => setShowAdd(!showAdd)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-qubic-cyan text-bg-deep font-medium text-sm hover:bg-qubic-cyan-light transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-qubic-cyan to-qubic-cyan-dark text-bg-deep font-medium text-sm shadow-[0_4px_14px_rgba(37,202,217,0.3)] hover:shadow-[0_6px_20px_rgba(37,202,217,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
         >
           <Plus className="w-4 h-4" />
           New Alert
@@ -125,7 +139,7 @@ export function Alerts() {
           </div>
           <button
             onClick={handleEnableNotif}
-            className="px-4 py-2 rounded-lg bg-warning text-bg-deep font-medium text-sm hover:bg-warning/80 transition-colors"
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-warning to-warning/80 text-bg-deep font-medium text-sm shadow-[0_4px_14px_rgba(245,158,11,0.3)] hover:shadow-[0_6px_20px_rgba(245,158,11,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
           >
             Enable
           </button>
@@ -146,6 +160,25 @@ export function Alerts() {
           <h3 className="font-heading font-semibold text-text-primary mb-4">
             Create Alert
           </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+            {ALERT_TYPES.map((type) => {
+              const Icon = type.icon;
+              return (
+                <button
+                  key={type.id}
+                  onClick={() => setAlertType(type.id)}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                    alertType === type.id
+                      ? "bg-qubic-cyan/20 text-qubic-cyan border border-qubic-cyan/30"
+                      : "bg-bg-elevated text-text-muted border border-bg-hover hover:border-qubic-cyan/20"
+                  }`}
+                >
+                  <Icon className="w-3 h-3" />
+                  {type.label}
+                </button>
+              );
+            })}
+          </div>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex rounded-lg overflow-hidden border border-bg-hover">
               <button
@@ -181,7 +214,7 @@ export function Alerts() {
             />
             <button
               onClick={handleAdd}
-              className="px-4 py-2 rounded-lg bg-qubic-cyan text-bg-deep font-medium text-sm hover:bg-qubic-cyan-light transition-colors"
+              className="px-4 py-2 rounded-lg bg-gradient-to-r from-qubic-cyan to-qubic-cyan-dark text-bg-deep font-medium text-sm shadow-[0_4px_14px_rgba(37,202,217,0.3)] hover:shadow-[0_6px_20px_rgba(37,202,217,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
             >
               Create
             </button>
@@ -259,8 +292,8 @@ export function Alerts() {
                     {alert.active ? "Active" : "Paused"}
                   </button>
                   <button
-                    onClick={() => handleDelete(alert.id)}
-                    className="p-2 rounded-lg text-text-disabled hover:text-danger hover:bg-danger/10 transition-all"
+                    onClick={() => removeAlert(alert.id)}
+                    className="p-2 rounded-lg text-text-disabled hover:text-danger hover:bg-danger/10 hover:shadow-[0_0_10px_rgba(239,68,68,0.2)] transition-all duration-200"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -270,6 +303,49 @@ export function Alerts() {
           })
         )}
       </div>
+
+      {history.length > 0 && (
+        <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-heading font-semibold text-text-primary">
+              Alert History
+            </h3>
+            <span className="text-xs text-text-muted">
+              {history.length} alerts triggered
+            </span>
+          </div>
+          <div className="space-y-2">
+            {history.slice(0, 5).map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center gap-3 p-2 rounded-lg hover:bg-bg-elevated transition-colors"
+              >
+                <Clock className="w-4 h-4 text-text-disabled" />
+                <div className="flex-1">
+                  <div className="text-xs text-text-primary">
+                    {item.message}
+                  </div>
+                  <div className="text-xs text-text-disabled">
+                    {new Date(item.triggeredAt).toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex gap-1">
+                  {item.sentToBrowser && (
+                    <span className="text-xs bg-info/10 text-info px-1 rounded">
+                      Browser
+                    </span>
+                  )}
+                  {item.sentToTelegram && (
+                    <span className="text-xs bg-info/10 text-info px-1 rounded">
+                      Telegram
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
