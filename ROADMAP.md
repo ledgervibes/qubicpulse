@@ -15,7 +15,7 @@
 
 ---
 
-## Phase 2 — Telegram Bot & Smart Alerts 🔄
+## Phase 2 — Telegram Bot & Smart Alerts ✅
 
 - Telegram bot (@qubic_pulse_bot) with wallet management
 - Real-time transaction notifications (QUBIC + multi-token)
@@ -48,4 +48,4 @@
 **Live**: [qubicpulse.pages.dev](https://qubicpulse.pages.dev)  
 **GitHub**: [github.com/sna4an/qubicpulse](https://github.com/sna4an/qubicpulse)  
 **Telegram**: [@qubic_pulse_bot](https://t.me/qubic_pulse_bot)  
-**Last updated**: 2026-07-28
+**Last updated**: 2026-07-29
