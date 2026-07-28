@@ -2,16 +2,18 @@
 
 **Your Qubic Command Center**
 
-An all-in-one dashboard for the Qubic network. Track portfolios, set price alerts, monitor wallet transactions, and explore DeFi — all in one place.
+An all-in-one dashboard for the Qubic ecosystem. Track portfolios, set price alerts, monitor wallet transactions, and explore DeFi — all in one place.
 
 ## Features
 
-- **Portfolio Tracker** — Track multiple Qubic wallets, view balances and transfer history
-- **Price Alerts** — Set custom price alerts with browser notifications
-- **Wallet Monitoring** — Get notified when transactions hit your wallets
-- **DeFi Dashboard** — Qubic ecosystem overview with live market data
-- **Telegram Notifications** — Receive alerts on your phone via Telegram bot
-- **Feeless Transactions** — Built on Qubic's zero-fee architecture
+- **Portfolio Tracking** — Multi-wallet support with real-time balance and USD valuation
+- **Price Alerts** — Browser notifications + Telegram delivery
+- **Transaction Monitoring** — Real-time notifications for ALL tokens (QUBIC + assets)
+- **DeFi Dashboard** — Live market data, volume charts, QX DEX integration
+- **Telegram Bot** — @qubit_pulse_bot for mobile wallet management and notifications
+- **Light/Dark Mode** — Theme toggle with system preference support
+- **Mobile Responsive** — Optimized for all screen sizes
+- **Glassmorphism UI** — Modern, premium design language
 
 ## Tech Stack
 
@@ -19,8 +21,10 @@ An all-in-one dashboard for the Qubic network. Track portfolios, set price alert
 - TailwindCSS (Qubic brand theme)
 - Zustand (state management)
 - Recharts (data visualization)
-- Qubic RPC API
-- CoinGecko API
+- Qubic RPC API + Event Logs API
+- CoinGecko + CoinPaprika + CoinMarketCap APIs
+- Cloudflare Workers (Telegram bot backend)
+- Cloudflare Pages (hosting)
 
 ## Development
 
@@ -37,7 +41,7 @@ npm run build
 
 ## Deployment
 
-Auto-deploys to GitHub Pages on push to `main` via GitHub Actions.
+Deployed on Cloudflare Pages. Auto-deploys on push to `main`.
 
 ## License
 
