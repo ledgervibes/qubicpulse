@@ -155,6 +155,7 @@ export async function getAssetHoldings(address: string): Promise<Array<{
 
   const holdings = new Map<string, { assetIssuer: string; balance: number }>();
 
+  // Process incoming transfers
   for (const log of incoming) {
     if (!log.assetPossessionChange) continue;
     const { assetName, assetIssuer, numberOfShares, destination } = log.assetPossessionChange;
@@ -170,6 +171,7 @@ export async function getAssetHoldings(address: string): Promise<Array<{
     holdings.set(assetName, existing);
   }
 
+  // Process outgoing transfers
   for (const log of outgoing) {
     if (!log.assetPossessionChange) continue;
     const { assetName, numberOfShares, source } = log.assetPossessionChange;
