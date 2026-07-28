@@ -17,6 +17,8 @@ export interface WalletNotification {
 
 const NOTIFICATIONS_KEY = "wallet_notifications";
 const LAST_TICK_KEY = "wallet_last_tick";
+const PREV_BALANCES_KEY = "wallet_prev_balances";
+const NOTIFIED_KEYS_KEY = "wallet_notified_keys";
 
 export function useWalletMonitor() {
   const wallets = useWalletStore((s) => s.wallets);
@@ -26,6 +28,41 @@ export function useWalletMonitor() {
   const prevBalancesRef = useRef<Map<string, { incoming: number; outgoing: number }>>(new Map());
   const notifiedRef = useRef<Set<string>>(new Set());
   const notificationsRef = useRef<WalletNotification[]>([]);
+
+  // Load persisted data
+  const loadPrevBalances = useCallback(() => {
+    const stored = localStorage.getItem(PREV_BALANCES_KEY);
+    if (stored) {
+      try {
+        const entries = JSON.parse(stored) as Array<[string, { incoming: number; outgoing: number }]>;
+        prevBalancesRef.current = new Map(entries);
+      } catch {
+        prevBalancesRef.current = new Map();
+      }
+    }
+  }, []);
+
+  const savePrevBalances = useCallback(() => {
+    const entries = Array.from(prevBalancesRef.current.entries());
+    localStorage.setItem(PREV_BALANCES_KEY, JSON.stringify(entries));
+  }, []);
+
+  const loadNotified = useCallback(() => {
+    const stored = localStorage.getItem(NOTIFIED_KEYS_KEY);
+    if (stored) {
+      try {
+        const keys = JSON.parse(stored) as string[];
+        notifiedRef.current = new Set(keys);
+      } catch {
+        notifiedRef.current = new Set();
+      }
+    }
+  }, []);
+
+  const saveNotified = useCallback(() => {
+    const keys = Array.from(notifiedRef.current);
+    localStorage.setItem(NOTIFIED_KEYS_KEY, JSON.stringify(keys));
+  }, []);
 
   const loadNotifications = useCallback(() => {
     const stored = localStorage.getItem(NOTIFICATIONS_KEY);
@@ -57,6 +94,7 @@ export function useWalletMonitor() {
       const key = `${notif.walletAddress}-${notif.type}-${notif.amount}-${notif.tokenName}`;
       if (notifiedRef.current.has(key)) return;
       notifiedRef.current.add(key);
+      saveNotified();
 
       const newNotif: WalletNotification = {
         ...notif,
@@ -70,7 +108,7 @@ export function useWalletMonitor() {
       // Dispatch custom event for toast
       window.dispatchEvent(new CustomEvent("wallet-notification", { detail: newNotif }));
     },
-    [saveNotifications]
+    [saveNotified, saveNotifications]
   );
 
   // Check QUBIC balance changes
@@ -111,9 +149,10 @@ export function useWalletMonitor() {
           incoming: currentBal.incomingAmount,
           outgoing: currentBal.outgoingAmount,
         });
+        savePrevBalances();
       }
     });
-  }, [wallets, balances, addNotification]);
+  }, [wallets, balances, addNotification, savePrevBalances]);
 
   // Check ALL token changes via Event Logs
   const checkAssetChanges = useCallback(async () => {
@@ -200,7 +239,9 @@ export function useWalletMonitor() {
 
   useEffect(() => {
     loadNotifications();
-  }, [loadNotifications]);
+    loadPrevBalances();
+    loadNotified();
+  }, [loadNotifications, loadPrevBalances, loadNotified]);
 
   useEffect(() => {
     if (wallets.length === 0) return;

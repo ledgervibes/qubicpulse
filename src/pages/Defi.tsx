@@ -28,6 +28,7 @@ export function Defi() {
   const [tickInfo, setTickInfo] = useState<{ currentTick: number; epoch: number } | null>(null);
   const [topAssets, setTopAssets] = useState<TopAsset[]>([]);
   const [loadingAssets, setLoadingAssets] = useState(true);
+  const [showAllAssets, setShowAllAssets] = useState(false);
 
   useEffect(() => {
     getPriceHistory(7).then(setVolumeHistory).catch(() => {});
@@ -130,8 +131,11 @@ export function Defi() {
             Top Assets on QX DEX
           </h3>
           {topAssets.length > 10 && (
-            <button className="text-xs text-qubic-cyan hover:text-qubic-cyan-light transition-colors font-medium">
-              View All →
+            <button 
+              onClick={() => setShowAllAssets(!showAllAssets)}
+              className="text-xs text-qubic-cyan hover:text-qubic-cyan-light transition-colors font-medium"
+            >
+              {showAllAssets ? "Show Less ←" : "View All →"}
             </button>
           )}
         </div>
@@ -163,7 +167,7 @@ export function Defi() {
                 </tr>
               </thead>
               <tbody>
-                {topAssets.slice(0, 10).map((asset, i) => (
+                {topAssets.slice(0, showAllAssets ? 20 : 10).map((asset, i) => (
                   <tr
                     key={asset.name}
                     className="border-b border-bg-hover/50 hover:bg-bg-elevated/30 transition-colors"
