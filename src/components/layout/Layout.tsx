@@ -4,10 +4,17 @@ import { StatusBar } from "./StatusBar";
 import { NotificationToast } from "../ui/NotificationToast";
 import { useInitData } from "../../hooks/useInitData";
 import { useWalletMonitor } from "../../hooks/useWalletMonitor";
+import { useThemeStore } from "../../stores/themeStore";
+import { useEffect } from "react";
 
 export function Layout() {
   useInitData();
   useWalletMonitor();
+
+  const initTheme = useThemeStore((s) => s.initTheme);
+  useEffect(() => {
+    initTheme();
+  }, [initTheme]);
 
   return (
     <div className="min-h-screen bg-bg-deep">

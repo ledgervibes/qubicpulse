@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { usePriceStore } from "../stores/priceStore";
-import { formatCurrency, formatPercent } from "../utils/format";
-import { TrendingUp, TrendingDown, ExternalLink, BarChart3, Clock, Layers } from "lucide-react";
+import { formatCurrency, formatPercent, formatBalance } from "../utils/format";
+import { TrendingUp, TrendingDown, ExternalLink, Clock, Layers, Activity, Loader2 } from "lucide-react";
 import type { PriceHistory } from "../types";
 import { getPriceHistory } from "../services/coingecko";
+import { getTopAssets } from "../services/qx-contract";
 import * as rpc from "../services/qubic-rpc";
 import {
   AreaChart,
@@ -15,14 +16,26 @@ import {
   CartesianGrid,
 } from "recharts";
 
+interface TopAsset {
+  name: string;
+  transfers: number;
+  volume: number;
+}
+
 export function Defi() {
   const price = usePriceStore((s) => s.price);
   const [volumeHistory, setVolumeHistory] = useState<PriceHistory | null>(null);
   const [tickInfo, setTickInfo] = useState<{ currentTick: number; epoch: number } | null>(null);
+  const [topAssets, setTopAssets] = useState<TopAsset[]>([]);
+  const [loadingAssets, setLoadingAssets] = useState(true);
 
   useEffect(() => {
     getPriceHistory(7).then(setVolumeHistory).catch(() => {});
     rpc.getStatus().then(setTickInfo).catch(() => {});
+    getTopAssets()
+      .then(setTopAssets)
+      .catch(() => {})
+      .finally(() => setLoadingAssets(false));
   }, []);
 
   const volumeData =
@@ -44,7 +57,7 @@ export function Defi() {
     {
       label: "Market Cap",
       value: price ? formatCurrency(price.usd_market_cap) : "—",
-      icon: <BarChart3 className="w-4 h-4" />,
+      icon: <Activity className="w-4 h-4" />,
     },
     {
       label: "24h Change",
@@ -82,10 +95,7 @@ export function Defi() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="glass-card p-5"
-          >
+          <div key={stat.label} className="glass-card p-5">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-text-muted">{stat.label}</span>
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-qubic-cyan/10 text-qubic-cyan">
@@ -113,6 +123,73 @@ export function Defi() {
         ))}
       </div>
 
+      {/* Top Assets on QX */}
+      <div className="glass-card p-5">
+        <h3 className="font-heading font-semibold text-text-primary mb-4 text-lg">
+          Top Assets on QX DEX
+        </h3>
+        {loadingAssets ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="w-5 h-5 text-qubic-cyan animate-spin" />
+          </div>
+        ) : topAssets.length === 0 ? (
+          <p className="text-sm text-text-muted text-center py-4">
+            No asset data available
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-bg-hover">
+                  <th className="text-left text-xs text-text-muted font-medium py-2 px-3">
+                    #
+                  </th>
+                  <th className="text-left text-xs text-text-muted font-medium py-2 px-3">
+                    Asset
+                  </th>
+                  <th className="text-right text-xs text-text-muted font-medium py-2 px-3">
+                    Transfers (24h)
+                  </th>
+                  <th className="text-right text-xs text-text-muted font-medium py-2 px-3">
+                    Volume
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {topAssets.map((asset, i) => (
+                  <tr
+                    key={asset.name}
+                    className="border-b border-bg-hover/50 hover:bg-bg-elevated/30 transition-colors"
+                  >
+                    <td className="py-3 px-3 text-sm text-text-muted">
+                      {i + 1}
+                    </td>
+                    <td className="py-3 px-3">
+                      <div className="flex items-center gap-2">
+                        <div className="h-6 w-6 rounded-full bg-qubic-gold/10 flex items-center justify-center">
+                          <span className="text-[10px] font-bold text-qubic-gold">
+                            {asset.name.slice(0, 2)}
+                          </span>
+                        </div>
+                        <span className="text-sm font-medium text-text-primary">
+                          {asset.name}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-3 px-3 text-right text-sm text-text-secondary">
+                      {asset.transfers.toLocaleString()}
+                    </td>
+                    <td className="py-3 px-3 text-right text-sm text-text-secondary">
+                      {formatBalance(asset.volume)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
       {volumeData.length > 0 && (
         <div className="chart-container">
           <h3 className="font-heading font-semibold text-text-primary mb-4 text-lg">
@@ -127,11 +204,7 @@ export function Defi() {
                     <stop offset="95%" stopColor="#FFDEA1" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="#1F2937"
-                  vertical={false}
-                />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
                 <XAxis
                   dataKey="date"
                   axisLine={false}
@@ -148,17 +221,15 @@ export function Defi() {
                 />
                 <Tooltip
                   contentStyle={{
-                    background: "#1F2937",
-                    border: "1px solid #374151",
+                    background: "rgba(17, 24, 39, 0.95)",
+                    backdropFilter: "blur(8px)",
+                    border: "1px solid rgba(37, 202, 217, 0.2)",
                     borderRadius: "8px",
                     color: "#F9FAFB",
                     fontSize: "13px",
                     padding: "8px 12px",
                   }}
-                  formatter={(value) => [
-                    formatCurrency(Number(value)),
-                    "Volume",
-                  ]}
+                  formatter={(value) => [formatCurrency(Number(value)), "Volume"]}
                   labelStyle={{ color: "#9CA3AF", marginBottom: "4px" }}
                   cursor={{ stroke: "#FFDEA1", strokeWidth: 1, strokeDasharray: "4 4" }}
                 />
@@ -177,82 +248,53 @@ export function Defi() {
         </div>
       )}
 
-      <div className="glass-card p-5">
-        <h3 className="font-heading font-semibold text-text-primary mb-4 text-lg">
-          Qubic Ecosystem
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {[
-            {
-              name: "QX (Qubic Exchange)",
-              desc: "Decentralized exchange for Qubic assets",
-              url: "https://qx.qubic.org",
-            },
-            {
-              name: "QubicSwap",
-              desc: "Token swap platform",
-              url: "https://qubicswap.org",
-            },
-            {
-              name: "Qubic Explorer",
-              desc: "Blockchain explorer",
-              url: "https://explorer.qubic.org",
-            },
-            {
-              name: "Qubic Wallet",
-              desc: "Official web wallet",
-              url: "https://wallet.qubic.org",
-            },
-            {
-              name: "Qubic Docs",
-              desc: "Developer documentation",
-              url: "https://docs.qubic.org",
-            },
-            {
-              name: "CoinGecko",
-              desc: "QUBIC market data",
-              url: "https://www.coingecko.com/en/coins/qubic-network",
-            },
-          ].map((item) => (
-            <a
-              key={item.name}
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-between p-4 rounded-lg border border-bg-hover hover:border-qubic-cyan/30 hover:shadow-[0_0_20px_rgba(37,202,217,0.08)] transition-all duration-200 group"
-            >
-              <div>
-                <div className="text-sm font-medium text-text-primary group-hover:text-qubic-cyan transition-colors">
-                  {item.name}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="glass-card p-5">
+          <h3 className="font-heading font-semibold text-text-primary mb-4 text-lg">
+            Qubic Ecosystem
+          </h3>
+          <div className="space-y-2">
+            {[
+              { name: "QX (Qubic Exchange)", desc: "Decentralized exchange", url: "https://qx.qubic.org" },
+              { name: "QubicSwap", desc: "Token swap platform", url: "https://qubicswap.org" },
+              { name: "Qubic Explorer", desc: "Blockchain explorer", url: "https://explorer.qubic.org" },
+              { name: "Qubic Wallet", desc: "Official web wallet", url: "https://wallet.qubic.org" },
+            ].map((item) => (
+              <a
+                key={item.name}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-bg-elevated/50 transition-colors group"
+              >
+                <div>
+                  <div className="text-sm font-medium text-text-primary group-hover:text-qubic-cyan transition-colors">
+                    {item.name}
+                  </div>
+                  <div className="text-xs text-text-muted">{item.desc}</div>
                 </div>
-                <div className="text-xs text-text-muted">{item.desc}</div>
-              </div>
-              <ExternalLink className="w-4 h-4 text-text-disabled group-hover:text-qubic-cyan transition-colors" />
-            </a>
-          ))}
+                <ExternalLink className="w-4 h-4 text-text-disabled group-hover:text-qubic-cyan transition-colors" />
+              </a>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="glass-card p-5">
-        <h3 className="font-heading font-semibold text-text-primary mb-4 text-lg">
-          About Qubic DeFi
-        </h3>
-        <div className="space-y-3 text-sm text-text-secondary">
-          <p>
-            Qubic offers feeless transactions with instant finality, making it
-            ideal for DeFi applications. The QX contract (contract index 1) is
-            the primary decentralized exchange on the network.
-          </p>
-          <p>
-            Smart contracts on Qubic are deployed through an IPO (Initial Public
-            Offering) model, where community members can invest in contract
-            shares and earn passive income from contract operations.
-          </p>
-          <p>
-            With a peak TPS of 15.5M (verified by CertiK), Qubic is the
-            fastest blockchain ever, enabling high-frequency trading and
-            real-time DeFi operations.
-          </p>
+        <div className="glass-card p-5">
+          <h3 className="font-heading font-semibold text-text-primary mb-4 text-lg">
+            About Qubic DeFi
+          </h3>
+          <div className="space-y-3 text-sm text-text-secondary">
+            <p>
+              Qubic offers feeless transactions with instant finality, making it
+              ideal for DeFi applications. The QX contract (contract index 1) is
+              the primary decentralized exchange on the network.
+            </p>
+            <p>
+              With a peak TPS of 15.5M (verified by CertiK), Qubic is the
+              fastest blockchain ever, enabling high-frequency trading and
+              real-time DeFi operations.
+            </p>
+          </div>
         </div>
       </div>
     </div>

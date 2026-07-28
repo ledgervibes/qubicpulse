@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { NAV_ITEMS, APP_NAME } from "../../utils/constants";
+import { ThemeToggle } from "../ui/ThemeToggle";
 
 const iconMap: Record<string, React.ReactNode> = {
   LayoutDashboard: (
@@ -67,12 +68,19 @@ export function Navbar() {
             })}
           </nav>
 
-          <button
-            className="md:hidden p-2 text-text-muted hover:text-text-primary"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
+          </div>
+
+          <div className="flex md:hidden items-center gap-2">
+            <ThemeToggle />
+            <button
+              className="p-2 text-text-muted hover:text-text-primary"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </div>
 
