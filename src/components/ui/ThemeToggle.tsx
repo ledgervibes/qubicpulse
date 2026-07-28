@@ -1,10 +1,9 @@
 import { useThemeStore } from "../../stores/themeStore";
-import { Sun, Moon, Monitor } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 
 const options = [
   { value: "light" as const, icon: Sun, label: "Light" },
   { value: "dark" as const, icon: Moon, label: "Dark" },
-  { value: "system" as const, icon: Monitor, label: "System" },
 ];
 
 export function ThemeToggle() {
@@ -24,7 +23,6 @@ export function ThemeToggle() {
           title={label}
         >
           <Icon className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">{label}</span>
         </button>
       ))}
     </div>

@@ -262,4 +262,15 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+
+  /* Mobile Responsive */
+  @media (max-width: 640px) {
+    .glass-card {
+      border-radius: 12px;
+    }
+
+    .glass-card:hover {
+      transform: none;
+    }
+  }
 }

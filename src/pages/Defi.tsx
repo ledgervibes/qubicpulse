@@ -125,9 +125,16 @@ export function Defi() {
 
       {/* Top Assets on QX */}
       <div className="glass-card p-5">
-        <h3 className="font-heading font-semibold text-text-primary mb-4 text-lg">
-          Top Assets on QX DEX
-        </h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-heading font-semibold text-text-primary text-lg">
+            Top Assets on QX DEX
+          </h3>
+          {topAssets.length > 10 && (
+            <button className="text-xs text-qubic-cyan hover:text-qubic-cyan-light transition-colors font-medium">
+              View All →
+            </button>
+          )}
+        </div>
         {loadingAssets ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="w-5 h-5 text-qubic-cyan animate-spin" />
@@ -156,15 +163,15 @@ export function Defi() {
                 </tr>
               </thead>
               <tbody>
-                {topAssets.map((asset, i) => (
+                {topAssets.slice(0, 10).map((asset, i) => (
                   <tr
                     key={asset.name}
                     className="border-b border-bg-hover/50 hover:bg-bg-elevated/30 transition-colors"
                   >
-                    <td className="py-3 px-3 text-sm text-text-muted">
+                    <td className="py-2.5 px-3 text-sm text-text-muted">
                       {i + 1}
                     </td>
-                    <td className="py-3 px-3">
+                    <td className="py-2.5 px-3">
                       <div className="flex items-center gap-2">
                         <div className="h-6 w-6 rounded-full bg-qubic-gold/10 flex items-center justify-center">
                           <span className="text-[10px] font-bold text-qubic-gold">
@@ -176,10 +183,10 @@ export function Defi() {
                         </span>
                       </div>
                     </td>
-                    <td className="py-3 px-3 text-right text-sm text-text-secondary">
+                    <td className="py-2.5 px-3 text-right text-sm text-text-secondary">
                       {asset.transfers.toLocaleString()}
                     </td>
-                    <td className="py-3 px-3 text-right text-sm text-text-secondary">
+                    <td className="py-2.5 px-3 text-right text-sm text-text-secondary">
                       {formatBalance(asset.volume)}
                     </td>
                   </tr>

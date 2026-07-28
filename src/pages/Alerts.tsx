@@ -126,10 +126,10 @@ export function Alerts() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-bg-elevated/50 rounded-lg p-1 w-fit">
+      <div className="flex gap-1 bg-bg-elevated/50 rounded-lg p-1 w-full sm:w-fit">
         <button
           onClick={() => setActiveTab("price")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
+          className={`flex-1 sm:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
             activeTab === "price"
               ? "bg-qubic-cyan text-bg-deep shadow-sm"
               : "text-text-muted hover:text-text-primary"
@@ -140,7 +140,7 @@ export function Alerts() {
         </button>
         <button
           onClick={() => setActiveTab("wallet")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
+          className={`flex-1 sm:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
             activeTab === "wallet"
               ? "bg-qubic-cyan text-bg-deep shadow-sm"
               : "text-text-muted hover:text-text-primary"
