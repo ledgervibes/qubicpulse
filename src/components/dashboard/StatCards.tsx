@@ -3,13 +3,19 @@ import { formatCurrency, formatPercent } from "../../utils/format";
 import { TrendingUp, TrendingDown, DollarSign, Activity, BarChart3 } from "lucide-react";
 import { Sparkline } from "../ui/Sparkline";
 
-export function StatCards() {
+interface Props {
+  activePeriod?: number;
+}
+
+export function StatCards({ activePeriod = 7 }: Props) {
   const price = usePriceStore((s) => s.price);
   const history = usePriceStore((s) => s.history);
   const loading = usePriceStore((s) => s.loading);
 
   const sparkData = history?.prices?.map(([, p]) => p) ?? [];
   const isPositive = (price?.usd_24h_change ?? 0) >= 0;
+
+  const periodLabel = `${activePeriod}d Trend`;
 
   const cards = [
     {
@@ -22,18 +28,18 @@ export function StatCards() {
     {
       label: "24h Change",
       value: price ? formatPercent(price.usd_24h_change) : "—",
-      sub: price ? `MCap: ${formatCurrency(price.usd_market_cap)}` : "",
+      sub: "",
       change: price?.usd_24h_change,
       icon: isPositive ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />,
     },
     {
       label: "Market Cap",
       value: price ? formatCurrency(price.usd_market_cap) : "—",
-      sub: price ? `ETH: ${price.eth.toFixed(10)}` : "",
+      sub: "",
       icon: <BarChart3 className="w-5 h-5" />,
     },
     {
-      label: "7d Trend",
+      label: periodLabel,
       value: "",
       sub: "",
       icon: <Activity className="w-5 h-5" />,

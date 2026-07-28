@@ -18,7 +18,11 @@ const PERIODS = [
   { label: "90d", days: 90 },
 ];
 
-export function PriceChart() {
+interface Props {
+  onPeriodChange?: (days: number) => void;
+}
+
+export function PriceChart({ onPeriodChange }: Props) {
   const history = usePriceStore((s) => s.history);
   const fetchHistory = usePriceStore((s) => s.fetchHistory);
   const loading = usePriceStore((s) => s.loading);
@@ -36,6 +40,7 @@ export function PriceChart() {
   const handlePeriodChange = (days: number) => {
     setActivePeriod(days);
     fetchHistory(days);
+    onPeriodChange?.(days);
   };
 
   const minPrice = data.length > 0 ? Math.min(...data.map((d) => d.price)) : 0;
