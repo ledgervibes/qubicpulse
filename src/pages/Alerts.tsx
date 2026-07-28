@@ -147,7 +147,7 @@ export function Alerts() {
       )}
 
       {price && (
-        <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
+        <div className="glass-card p-5">
           <div className="text-sm text-text-muted">Current Price</div>
           <div className="text-2xl font-heading font-bold text-text-primary">
             {formatCurrency(price.usd)}

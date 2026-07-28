@@ -31,7 +31,7 @@ export function WalletCard({ wallet }: Props) {
   };
 
   return (
-    <div className="rounded-xl border border-bg-hover bg-bg-surface overflow-hidden hover:border-qubic-cyan/30 hover:shadow-[0_0_20px_rgba(37,202,217,0.08)] transition-all duration-200">
+    <div className="glass-card overflow-hidden">
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">

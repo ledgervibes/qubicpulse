@@ -37,7 +37,7 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-bg-hover bg-bg-surface/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-white/5 bg-bg-deep/80 backdrop-blur-xl">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group">

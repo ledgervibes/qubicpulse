@@ -42,24 +42,24 @@ export function PriceChart() {
   const maxPrice = data.length > 0 ? Math.max(...data.map((d) => d.price)) : 0;
 
   return (
-    <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
+    <div className="chart-container">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-heading font-semibold text-text-primary">
+          <h3 className="font-heading font-semibold text-text-primary text-lg">
             Price Chart
           </h3>
           {data.length > 0 && (
             <div className="flex gap-4 mt-1">
-              <span className="text-xs text-success">
+              <span className="text-xs text-success font-medium">
                 H: ${maxPrice.toFixed(8)}
               </span>
-              <span className="text-xs text-danger">
+              <span className="text-xs text-danger font-medium">
                 L: ${minPrice.toFixed(8)}
               </span>
             </div>
           )}
         </div>
-        <div className="flex gap-1 bg-bg-elevated rounded-lg p-1">
+        <div className="flex gap-1 bg-bg-elevated/50 rounded-lg p-1">
           {PERIODS.map((p) => (
             <button
               key={p.days}
@@ -95,7 +95,7 @@ export function PriceChart() {
               </defs>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="#1F2937"
+                stroke="rgba(255,255,255,0.03)"
                 vertical={false}
               />
               <XAxis
@@ -115,12 +115,14 @@ export function PriceChart() {
               />
               <Tooltip
                 contentStyle={{
-                  background: "#1F2937",
-                  border: "1px solid #374151",
+                  background: "rgba(17, 24, 39, 0.95)",
+                  backdropFilter: "blur(8px)",
+                  border: "1px solid rgba(37, 202, 217, 0.2)",
                   borderRadius: "8px",
                   color: "#F9FAFB",
                   fontSize: "13px",
                   padding: "8px 12px",
+                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.3)",
                 }}
                 formatter={(value) => [`$${Number(value).toFixed(8)}`, "Price"]}
                 labelStyle={{ color: "#9CA3AF", marginBottom: "4px" }}

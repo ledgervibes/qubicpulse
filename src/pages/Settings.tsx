@@ -65,7 +65,7 @@ export function Settings() {
         </div>
       )}
 
-      <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
+      <div className="glass-card p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-8 w-8 rounded-lg bg-info/10 flex items-center justify-center text-info">
@@ -93,7 +93,7 @@ export function Settings() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
+      <div className="glass-card p-5">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-8 w-8 rounded-lg bg-qubic-gold/10 flex items-center justify-center text-qubic-gold">
             <Coffee className="w-4 h-4" />
@@ -135,7 +135,7 @@ export function Settings() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
+      <div className="glass-card p-5">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-8 w-8 rounded-lg bg-info/10 flex items-center justify-center text-info">
             <Download className="w-4 h-4" />
@@ -158,7 +158,7 @@ export function Settings() {
         </button>
       </div>
 
-      <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
+      <div className="glass-card p-5">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-8 w-8 rounded-lg bg-warning/10 flex items-center justify-center text-warning">
             <Upload className="w-4 h-4" />
@@ -189,7 +189,7 @@ export function Settings() {
         </button>
       </div>
 
-      <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
+      <div className="glass-card p-5">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-8 w-8 rounded-lg bg-qubic-cyan/10 flex items-center justify-center text-qubic-cyan">
             <SettingsIcon className="w-4 h-4" />

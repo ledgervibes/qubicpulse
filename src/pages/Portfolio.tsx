@@ -125,11 +125,11 @@ export function Portfolio() {
       )}
 
       {wallets.length > 0 && (
-        <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
+        <div className="glass-card p-5">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-text-muted">Total Value</div>
-              <div className="text-2xl font-heading font-bold text-text-primary">
+              <div className="text-sm text-text-muted mb-1">Total Value</div>
+              <div className="text-3xl font-heading font-bold text-text-primary">
                 {formatCurrency(totalValue)}
               </div>
             </div>

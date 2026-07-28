@@ -84,7 +84,7 @@ export function Defi() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="rounded-xl border border-bg-hover bg-bg-surface p-5 hover:border-qubic-cyan/30 hover:shadow-[0_0_20px_rgba(37,202,217,0.08)] transition-all duration-200"
+            className="glass-card p-5"
           >
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-text-muted">{stat.label}</span>
@@ -114,8 +114,8 @@ export function Defi() {
       </div>
 
       {volumeData.length > 0 && (
-        <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
-          <h3 className="font-heading font-semibold text-text-primary mb-4">
+        <div className="chart-container">
+          <h3 className="font-heading font-semibold text-text-primary mb-4 text-lg">
             7-Day Volume
           </h3>
           <div className="h-48">
@@ -177,8 +177,8 @@ export function Defi() {
         </div>
       )}
 
-      <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
-        <h3 className="font-heading font-semibold text-text-primary mb-4">
+      <div className="glass-card p-5">
+        <h3 className="font-heading font-semibold text-text-primary mb-4 text-lg">
           Qubic Ecosystem
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -233,8 +233,8 @@ export function Defi() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
-        <h3 className="font-heading font-semibold text-text-primary mb-4">
+      <div className="glass-card p-5">
+        <h3 className="font-heading font-semibold text-text-primary mb-4 text-lg">
           About Qubic DeFi
         </h3>
         <div className="space-y-3 text-sm text-text-secondary">

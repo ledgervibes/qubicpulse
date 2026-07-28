@@ -17,14 +17,14 @@ export function PortfolioSummary() {
   const totalValue = price ? totalBalance * price.usd : 0;
 
   return (
-    <div className="rounded-xl border border-bg-hover bg-bg-surface p-5">
+    <div className="glass-card p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-heading font-semibold text-text-primary">
+        <h3 className="font-heading font-semibold text-text-primary text-lg">
           Portfolio
         </h3>
         <Link
           to="/portfolio"
-          className="text-xs text-qubic-cyan hover:text-qubic-cyan-light transition-colors"
+          className="text-xs text-qubic-cyan hover:text-qubic-cyan-light transition-colors font-medium"
         >
           View All →
         </Link>
@@ -36,7 +36,7 @@ export function PortfolioSummary() {
           <p className="text-sm text-text-muted mb-2">No wallets added yet</p>
           <Link
             to="/portfolio"
-            className="text-sm text-qubic-cyan hover:text-qubic-cyan-light transition-colors"
+            className="text-sm text-qubic-cyan hover:text-qubic-cyan-light transition-colors font-medium"
           >
             Add your first wallet →
           </Link>
@@ -54,10 +54,11 @@ export function PortfolioSummary() {
           <div className="space-y-2">
             {wallets.slice(0, 3).map((w) => {
               const bal = balances.get(w.address);
+              const value = price && bal ? bal.balance * price.usd : 0;
               return (
                 <div
                   key={w.id}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-bg-elevated transition-colors"
+                  className="flex items-center justify-between p-2.5 rounded-lg hover:bg-bg-elevated/50 transition-colors"
                 >
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-full bg-qubic-cyan/10 flex items-center justify-center">
@@ -76,8 +77,8 @@ export function PortfolioSummary() {
                     <div className="text-sm font-medium text-text-primary">
                       {bal ? formatBalance(bal.balance) : "—"} Q
                     </div>
-                    <div className="text-xs text-qubic-gold">
-                      {bal && price ? formatCurrency(bal.balance * price.usd) : "—"}
+                    <div className="text-xs text-qubic-gold font-medium">
+                      {bal && price ? formatCurrency(value) : "—"}
                     </div>
                   </div>
                 </div>
