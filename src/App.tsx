@@ -4,6 +4,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { Portfolio } from "./pages/Portfolio";
 import { Alerts } from "./pages/Alerts";
 import { Defi } from "./pages/Defi";
+import { Staking } from "./pages/Staking";
 import { Settings } from "./pages/Settings";
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/alerts" element={<Alerts />} />
           <Route path="/defi" element={<Defi />} />
+          <Route path="/staking" element={<Staking />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>

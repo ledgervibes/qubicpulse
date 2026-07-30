@@ -17,6 +17,11 @@ export function NotificationPreferences() {
       desc: "Get notified when your wallet receives or sends QUBIC",
     },
     {
+      key: "rewardAlerts" as const,
+      label: "Staking Rewards",
+      desc: "Get notified when you receive QEarn or QBond rewards",
+    },
+    {
       key: "dailySummary" as const,
       label: "Daily Summary",
       desc: "Receive a daily summary of price and portfolio",

@@ -88,3 +88,20 @@ export async function sendBatchNotification(
 
   await sendMessage(chatId, text, "HTML");
 }
+
+export async function sendRewardNotification(
+  chatId: string,
+  type: "qearn" | "qbond",
+  amount: number,
+  epoch: number
+): Promise<void> {
+  const emoji = type === "qearn" ? "💰" : "🎫";
+  const name = type === "qearn" ? "QEarn" : "QBond";
+  const text =
+    `${emoji} <b>Staking Reward Received!</b>\n\n` +
+    `<b>Type:</b> ${name}\n` +
+    `<b>Amount:</b> ${amount.toLocaleString()} QU\n` +
+    `<b>Epoch:</b> ${epoch}\n\n` +
+    `Check your portfolio on QubicPulse!`;
+  await sendMessage(chatId, text, "HTML");
+}

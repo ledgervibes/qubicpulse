@@ -7,6 +7,7 @@ export interface NotificationPreferences {
   dailySummary: boolean;
   weeklySummary: boolean;
   summaryTime: string;
+  rewardAlerts: boolean;
 }
 
 interface NotificationStore {
@@ -26,6 +27,7 @@ const defaultPreferences: NotificationPreferences = {
   dailySummary: false,
   weeklySummary: false,
   summaryTime: "09:00",
+  rewardAlerts: true,
 };
 
 export const useNotificationStore = create<NotificationStore>((set, get) => ({

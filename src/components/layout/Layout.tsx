@@ -4,12 +4,14 @@ import { StatusBar } from "./StatusBar";
 import { NotificationToast } from "../ui/NotificationToast";
 import { useInitData } from "../../hooks/useInitData";
 import { useWalletMonitor } from "../../hooks/useWalletMonitor";
+import { useRewardMonitor } from "../../hooks/useRewardMonitor";
 import { useThemeStore } from "../../stores/themeStore";
 import { useEffect } from "react";
 
 export function Layout() {
   useInitData();
   useWalletMonitor();
+  useRewardMonitor();
 
   const initTheme = useThemeStore((s) => s.initTheme);
   useEffect(() => {

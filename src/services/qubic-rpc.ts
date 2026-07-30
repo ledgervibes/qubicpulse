@@ -197,3 +197,78 @@ export async function getAssetHoldings(address: string): Promise<Array<{
     }))
     .filter((h) => h.balance > 0);
 }
+
+// --- Smart Contract Query Helpers ---
+
+function encodeBase64(data: Uint8Array): string {
+  let binary = "";
+  for (let i = 0; i < data.length; i++) {
+    binary += String.fromCharCode(data[i]);
+  }
+  return btoa(binary);
+}
+
+export function decodeBase64(base64: string): Uint8Array {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
+export function encodeUint32(value: number): Uint8Array {
+  const bytes = new Uint8Array(4);
+  const view = new DataView(bytes.buffer);
+  view.setUint32(0, value, true);
+  return bytes;
+}
+
+export function encodeUint64(value: bigint): Uint8Array {
+  const bytes = new Uint8Array(8);
+  const view = new DataView(bytes.buffer);
+  view.setBigUint64(0, value, true);
+  return bytes;
+}
+
+export function parseSint64(data: Uint8Array, offset: number): number {
+  const view = new DataView(data.buffer, data.byteOffset + offset, 8);
+  return Number(view.getBigInt64(0, true));
+}
+
+export function parseUint64(data: Uint8Array, offset: number): number {
+  const view = new DataView(data.buffer, data.byteOffset + offset, 8);
+  return Number(view.getBigUint64(0, true));
+}
+
+export function encodeAddress(address: string): Uint8Array {
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(address.toUpperCase());
+  const result = new Uint8Array(32);
+  result.set(bytes.slice(0, 32));
+  return result;
+}
+
+export async function querySmartContract<T>(
+  contractIndex: number,
+  inputType: number,
+  inputSize: number,
+  requestData: Uint8Array,
+  parseResponse: (data: Uint8Array) => T
+): Promise<T> {
+  const res = await fetch(`${QUBIC_RPC_URL}/v1/querySmartContract`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contractIndex,
+      inputType,
+      inputSize,
+      requestData: encodeBase64(requestData),
+    }),
+  });
+
+  if (!res.ok) throw new Error(`Smart contract query error: ${res.status}`);
+  const data = await res.json();
+  const responseBytes = decodeBase64(data.responseData);
+  return parseResponse(responseBytes);
+}

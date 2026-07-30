@@ -112,3 +112,72 @@ export interface EventLog {
     numberOfShares: string;
   };
 }
+
+export interface QEarnLockInfo {
+  lockedAmount: number;
+  bonusAmount: number;
+  currentLockedAmount: number;
+  currentBonusAmount: number;
+  yield: number;
+}
+
+export interface QEarnStats {
+  earlyUnlockedAmount: number;
+  earlyUnlockedPercent: number;
+  totalLockedAmount: number;
+  averageAPY: number;
+}
+
+export interface QEarnBurnedBoosted {
+  burnedAmount: number;
+  averageBurnedPercent: number;
+  boostedAmount: number;
+  averageBoostedPercent: number;
+  rewardedAmount: number;
+  averageRewardedPercent: number;
+}
+
+export interface QEarnUserStatus {
+  fullyUnlockedAmount: number;
+  fullyRewardedAmount: number;
+  earlyUnlockedAmount: number;
+  earlyRewardedAmount: number;
+}
+
+export interface QBondInfo {
+  stakersAmount: number;
+  totalStaked: number;
+  apy: number;
+}
+
+export interface QBondFees {
+  stakeFeePercent: number;
+  tradeFeePercent: number;
+  transferFee: number;
+}
+
+export interface QBondMBondInfo {
+  epoch: number;
+  totalStakedQBond: number;
+  totalStakedQEarn: number;
+  apy: number;
+}
+
+export interface QBondUserMBonds {
+  totalMBondsAmount: number;
+  mbonds: Array<{
+    epoch: number;
+    amount: number;
+    apy: number;
+  }>;
+}
+
+export interface RewardEstimate {
+  walletBalance: number;
+  qearnLocked: number;
+  qbondMBonds: number;
+  estimatedQEarnReward: number;
+  estimatedQBondReward: number;
+  potentialStakingReward: number;
+  currentAPY: number;
+}
