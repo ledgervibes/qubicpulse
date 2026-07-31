@@ -39,12 +39,14 @@
 
 ---
 
-## v2.0 — Staking & Rewards ⏳
+## v2.0 — Staking & Rewards ✅
 
-- Staking Comparator (Qearn vs QBond side-by-side)
-- Epoch Reward Calculator (estimated rewards per wallet)
-- Epoch Countdown widget (dashboard)
-- Reward notification via Telegram
+- [x] Staking Comparator (QEarn vs QBond side-by-side)
+- [x] Epoch Reward Calculator (estimated rewards per wallet)
+- [x] Epoch Countdown widget (dashboard)
+- [x] Reward notifications via Telegram (QEarn rewards)
+
+> QBond maturity-based reward notifications require a verified contract/API data source and are planned as a future enhancement.
 
 ---
 
@@ -89,4 +91,4 @@
 **Live**: [qubicpulse.pages.dev](https://qubicpulse.pages.dev)  
 **GitHub**: [github.com/sna4an/qubicpulse](https://github.com/sna4an/qubicpulse)  
 **Telegram**: [@qubit_pulse_bot](https://t.me/qubit_pulse_bot)  
-**Last updated**: 2026-07-29
+**Last updated**: 2026-08-01

@@ -198,7 +198,7 @@ export function Settings() {
             <h3 className="font-heading font-semibold text-text-primary">
               About {APP_NAME}
             </h3>
-            <p className="text-xs text-text-muted">v1.0.0 • All Phases Complete</p>
+            <p className="text-xs text-text-muted">v2.0 • All Phases Complete</p>
           </div>
         </div>
         <div className="text-sm text-text-secondary space-y-2">
