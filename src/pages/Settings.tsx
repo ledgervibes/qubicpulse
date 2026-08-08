@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { TIP_ADDRESS, APP_NAME, TELEGRAM_BOT_USERNAME } from "../utils/constants";
 import * as storage from "../services/storage";
+import { sendMessage } from "../services/telegram";
+import { useNotificationStore } from "../stores/notificationStore";
 import {
   Settings as SettingsIcon,
   Download,
@@ -16,6 +18,11 @@ export function Settings() {
   const [copied, setCopied] = useState(false);
   const [importText, setImportText] = useState("");
   const [message, setMessage] = useState("");
+  const [chatIdInput, setChatIdInput] = useState("");
+  const telegramChatId = useNotificationStore((state) => state.telegramChatId);
+  const connected = useNotificationStore((state) => state.connected);
+  const setChatId = useNotificationStore((state) => state.setChatId);
+  const disconnectTelegram = useNotificationStore((state) => state.disconnect);
 
   const handleExport = () => {
     const data = storage.exportAll();
@@ -46,6 +53,27 @@ export function Settings() {
     navigator.clipboard.writeText(TIP_ADDRESS);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleTelegramConnect = () => {
+    const chatId = chatIdInput.trim();
+    if (!/^-?\d{1,32}$/.test(chatId)) {
+      setMessage("Enter a valid Telegram Chat ID");
+      return;
+    }
+    setChatId(chatId);
+    setChatIdInput("");
+    setMessage("Telegram Chat ID saved");
+  };
+
+  const handleTelegramTest = async () => {
+    if (!telegramChatId) return;
+    try {
+      await sendMessage(telegramChatId, "QubicPulse Telegram connection is working.", "HTML");
+      setMessage("Test notification sent");
+    } catch {
+      setMessage("Could not send test notification");
+    }
   };
 
   return (
@@ -87,9 +115,34 @@ export function Settings() {
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-info to-info/80 text-white font-medium text-sm shadow-[0_4px_14px_rgba(59,130,246,0.3)] hover:shadow-[0_6px_20px_rgba(59,130,246,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
           >
             <Send className="w-4 h-4" />
-            Connect
+            Open Bot
             <ExternalLink className="w-3 h-3" />
           </a>
+        </div>
+        <div className="mt-4 border-t border-bg-hover pt-4 space-y-3">
+          <p className="text-xs text-text-muted">
+            Start the QubicPulse bot, get your ID from @userinfobot, then enter it below.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              value={chatIdInput}
+              onChange={(event) => setChatIdInput(event.target.value)}
+              inputMode="numeric"
+              placeholder={connected ? `Connected: ${telegramChatId}` : "Telegram Chat ID"}
+              aria-label="Telegram Chat ID"
+              className="flex-1 px-3 py-2 rounded-lg bg-bg-elevated border border-bg-hover text-text-primary text-sm font-mono focus:outline-none focus:border-qubic-cyan/50"
+            />
+            <button onClick={handleTelegramConnect} className="btn-gradient text-sm">
+              Save Chat ID
+            </button>
+          </div>
+          {connected && (
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-success">Telegram connected</span>
+              <button onClick={handleTelegramTest} className="btn-glass text-xs">Send Test</button>
+              <button onClick={disconnectTelegram} className="text-xs text-danger hover:underline">Disconnect</button>
+            </div>
+          )}
         </div>
       </div>
 

@@ -31,12 +31,6 @@ export async function sendMessage(
   });
 }
 
-export async function getUpdates(): Promise<
-  Array<{ message?: { chat: { id: number }; text?: string; from?: { id: number } } }>
-> {
-  return fetchTG("getUpdates");
-}
-
 export function getBotLink(walletAddress?: string): string {
   const startParam = walletAddress ? `?start=${walletAddress}` : "";
   return `https://t.me/${TELEGRAM_BOT_USERNAME}${startParam}`;

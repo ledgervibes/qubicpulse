@@ -10,6 +10,7 @@ const ALLOWED_ORIGINS = new Set([
 const MAX_BODY_BYTES = 8_192;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 30;
+const CMC_CACHE_TTL_SECONDS = 60;
 const requestCounts = new Map<string, { count: number; expiresAt: number }>();
 
 function corsHeaders(origin: string | null): Headers {
@@ -27,6 +28,9 @@ function corsHeaders(origin: string | null): Headers {
 
 function json(data: unknown, status = 200, origin: string | null = null): Response {
   const headers = corsHeaders(origin);
+  headers.set("X-Content-Type-Options", "nosniff");
+  headers.set("Referrer-Policy", "no-referrer");
+  headers.set("X-Frame-Options", "DENY");
   headers.set("Content-Type", "application/json");
   return new Response(JSON.stringify(data), { status, headers });
 }
@@ -87,6 +91,16 @@ async function telegram(request: Request, env: Env, method: string, origin: stri
 }
 
 async function cmc(env: Env, origin: string | null): Promise<Response> {
+  const cacheKey = new Request("https://qubicpulse-api.internal/price");
+  const cached = await caches.default.match(cacheKey);
+  if (cached) {
+    const response = new Response(cached.body, cached);
+    const headers = corsHeaders(origin);
+    headers.set("Content-Type", "application/json");
+    headers.set("X-Cache", "HIT");
+    return new Response(response.body, { status: response.status, headers });
+  }
+
   const response = await fetch("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=QUBIC,BTC,ETH&convert=USD", {
     headers: { "X-CMC_PRO_API_KEY": env.CMC_API_KEY },
   });
@@ -96,13 +110,22 @@ async function cmc(env: Env, origin: string | null): Promise<Response> {
   const btc = payload.data.BTC?.quote.USD.price ?? 0;
   const eth = payload.data.ETH?.quote.USD.price ?? 0;
   if (!qubic) return json({ error: "QUBIC market data unavailable" }, 502, origin);
-  return json({
+  const data = {
     usd: qubic.price,
     usd_24h_change: qubic.percent_change_24h ?? 0,
     usd_market_cap: qubic.market_cap ?? 0,
     btc: btc > 0 ? qubic.price / btc : 0,
     eth: eth > 0 ? qubic.price / eth : 0,
-  }, 200, origin);
+  };
+  const cacheResponse = json(data);
+  cacheResponse.headers.set(
+    "Cache-Control",
+    `public, max-age=${CMC_CACHE_TTL_SECONDS}`
+  );
+  await caches.default.put(cacheKey, cacheResponse);
+  const result = json(data, 200, origin);
+  result.headers.set("X-Cache", "MISS");
+  return result;
 }
 
 export default {

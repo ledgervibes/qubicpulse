@@ -48,6 +48,8 @@ Environment variables:
 
 CoinMarketCap and Telegram are optional server-side integrations. CoinGecko and CoinPaprika remain the public price sources. The Worker exposes `/telegram/sendMessage`, `/price`, and `/health`.
 
+Telegram uses a manual Chat ID flow and does not require a webhook or database. Users start `@qubic_pulse_bot`, obtain their Chat ID, save it locally in Settings, and send a test notification through the Worker.
+
 ## Build
 
 ```bash
