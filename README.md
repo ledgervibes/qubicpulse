@@ -43,9 +43,10 @@ Copy `.env.example` to `.env.local` when enabling optional integrations. Never c
 
 Environment variables:
 
-- `VITE_TELEGRAM_API_URL` — server-side Telegram proxy URL. The Telegram bot token must only exist as a Cloudflare Worker secret.
+- `VITE_TELEGRAM_API_URL` — base URL of the server-side Telegram proxy. The Telegram bot token must only exist as a Cloudflare Worker secret.
+- `VITE_CMC_API_URL` — server-side CoinMarketCap proxy URL. The CMC key must only exist as a Cloudflare Worker secret.
 
-CoinMarketCap is disabled in the browser build until a server-side proxy is available. CoinGecko and CoinPaprika remain the public price sources.
+CoinMarketCap and Telegram are optional server-side integrations. CoinGecko and CoinPaprika remain the public price sources. The Worker exposes `/telegram/sendMessage`, `/price`, and `/health`.
 
 ## Build
 
@@ -64,3 +65,13 @@ npm run build
 ## Deployment
 
 Production is hosted on Cloudflare Pages at `qubicpulse.pages.dev`. The repository workflow validates lint, tests, and build; deploy the generated `dist` directory through the connected Cloudflare Pages project.
+
+Deploy the optional API Worker and set its encrypted secrets interactively:
+
+```bash
+npm run worker:deploy
+npx wrangler secret put TELEGRAM_BOT_TOKEN --config worker/wrangler.jsonc
+npx wrangler secret put CMC_API_KEY --config worker/wrangler.jsonc
+```
+
+Set `VITE_TELEGRAM_API_URL` and `VITE_CMC_API_URL` to the deployed Worker base URL in the Cloudflare Pages build environment. Never put either secret in a `VITE_*` variable.

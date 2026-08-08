@@ -4,7 +4,7 @@ function getApiUrl(): string {
   if (!TELEGRAM_API_URL) {
     throw new Error("Telegram notifications are not configured");
   }
-  return TELEGRAM_API_URL.replace(/\/$/, "");
+  return `${TELEGRAM_API_URL.replace(/\/$/, "")}/telegram`;
 }
 
 async function fetchTG<T>(method: string, body?: unknown): Promise<T> {

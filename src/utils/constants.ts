@@ -9,6 +9,9 @@ export const QUBIC_COINGECKO_ID = "qubic-network";
 export const TELEGRAM_API_URL = import.meta.env.VITE_TELEGRAM_API_URL as
   | string
   | undefined;
+export const CMC_API_URL = import.meta.env.VITE_CMC_API_URL as
+  | string
+  | undefined;
 export const TELEGRAM_BOT_USERNAME = "qubic_pulse_bot";
 
 export const QUBIC_ADDRESS_REGEX = /^[A-Z]{60}$/;
