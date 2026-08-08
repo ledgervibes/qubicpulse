@@ -22,7 +22,7 @@ export function useInitData() {
     loadTelegram();
     fetchPrice();
     fetchHistory(7);
-  }, []);
+  }, [loadWallets, loadAlerts, loadTelegram, fetchPrice, fetchHistory]);
 
   useEffect(() => {
     const id = setInterval(refreshBalances, POLL_INTERVAL_MS);

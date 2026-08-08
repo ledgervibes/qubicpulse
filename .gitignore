@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local agent/browser artifacts
+.playwright-mcp/
+AGENTS.md
+
+# Environment files
+.env
+.env.*
+!.env.example

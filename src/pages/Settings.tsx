@@ -213,7 +213,7 @@ export function Settings() {
           <p>Built with React, TypeScript, and the Qubic RPC API.</p>
           <div className="flex gap-3 pt-2">
             <a
-              href="https://github.com/sna4an/qubicpulse"
+              href="https://github.com/ledgervibes/qubicpulse"
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-text-muted hover:text-qubic-cyan transition-colors flex items-center gap-1"

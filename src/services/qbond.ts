@@ -56,9 +56,10 @@ export async function getQBondMBondsTable(): Promise<QBondMBondInfo[]> {
     requestData,
     (data) => {
       const info: QBondMBondInfo[] = [];
+      const entrySize = 32;
       for (let i = 0; i < 512; i++) {
-        const offset = i * 24;
-        if (offset + 24 > data.length) break;
+        const offset = i * entrySize;
+        if (offset + entrySize > data.length) break;
 
         const epoch = parseUint64(data, offset);
         if (epoch === 0) break;

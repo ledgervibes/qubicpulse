@@ -1,9 +1,14 @@
-import { TELEGRAM_BOT_TOKEN, TELEGRAM_BOT_USERNAME } from "../utils/constants";
+import { TELEGRAM_API_URL, TELEGRAM_BOT_USERNAME } from "../utils/constants";
 
-const API = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
+function getApiUrl(): string {
+  if (!TELEGRAM_API_URL) {
+    throw new Error("Telegram notifications are not configured");
+  }
+  return TELEGRAM_API_URL.replace(/\/$/, "");
+}
 
 async function fetchTG<T>(method: string, body?: unknown): Promise<T> {
-  const res = await fetch(`${API}/${method}`, {
+  const res = await fetch(`${getApiUrl()}/${method}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: body ? JSON.stringify(body) : undefined,

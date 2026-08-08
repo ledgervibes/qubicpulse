@@ -26,7 +26,7 @@ QubicPulse combines all essential features in one platform:
 ## Technical Architecture
 
 - Frontend: React, TypeScript, TailwindCSS
-- Backend: Cloudflare Workers (Telegram bot)
+- Backend: Cloudflare Workers (server-side Telegram notification proxy)
 - APIs: Qubic RPC, CoinGecko, CoinPaprika, CoinMarketCap
 - Hosting: Cloudflare Pages
 - State: Zustand + localStorage
@@ -78,11 +78,11 @@ Solo developer with experience in:
 - Cloudflare Workers/Pages
 - Qubic RPC API integration
 
-GitHub: github.com/sna4an
+GitHub: github.com/ledgervibes
 
 ## Links
 
 - Live: qubicpulse.pages.dev
-- GitHub: github.com/sna4an/qubicpulse
+- GitHub: github.com/ledgervibes/qubicpulse
 - Telegram Bot: t.me/qubit_pulse_bot
 - X/Twitter: @QubicPulse

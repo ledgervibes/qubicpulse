@@ -89,6 +89,6 @@
 ---
 
 **Live**: [qubicpulse.pages.dev](https://qubicpulse.pages.dev)  
-**GitHub**: [github.com/sna4an/qubicpulse](https://github.com/sna4an/qubicpulse)  
+**GitHub**: [github.com/ledgervibes/qubicpulse](https://github.com/ledgervibes/qubicpulse)
 **Telegram**: [@qubit_pulse_bot](https://t.me/qubit_pulse_bot)  
 **Last updated**: 2026-08-01

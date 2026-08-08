@@ -1,13 +1,7 @@
 export const EPOCH_DURATION_SECONDS = 604800;
-export const EPOCH_DURATION_TICKS = 14112000;
-export const TICKS_PER_SECOND = 15.38;
-
-const REFERENCE_EPOCH = 137;
-const REFERENCE_TICK = 26755200;
-
-export function calculateEpochStartTick(epoch: number): number {
-  return REFERENCE_TICK + (epoch - REFERENCE_EPOCH) * EPOCH_DURATION_TICKS;
-}
+const EPOCH_DURATION_MS = EPOCH_DURATION_SECONDS * 1000;
+const EPOCH_START_DAY_UTC = 3;
+const EPOCH_START_HOUR_UTC = 12;
 
 export interface EpochCountdown {
   days: number;
@@ -17,19 +11,33 @@ export interface EpochCountdown {
   progress: number;
   currentEpoch: number;
   epochStartTick: number;
-  epochEndTick: number;
 }
 
 export function calculateEpochCountdown(
-  currentTick: number,
-  currentEpoch: number
+  currentEpoch: number,
+  initialTick: number,
+  now: Date = new Date()
 ): EpochCountdown {
-  const epochStartTick = calculateEpochStartTick(currentEpoch);
-  const epochEndTick = epochStartTick + EPOCH_DURATION_TICKS;
-  const ticksInCurrentEpoch = currentTick - epochStartTick;
-  const progress = Math.min(100, Math.max(0, (ticksInCurrentEpoch / EPOCH_DURATION_TICKS) * 100));
-  const remainingTicks = Math.max(0, epochEndTick - currentTick);
-  const remainingSeconds = Math.floor(remainingTicks / TICKS_PER_SECOND);
+  const epochStart = new Date(now);
+  const daysSinceWednesday =
+    (epochStart.getUTCDay() - EPOCH_START_DAY_UTC + 7) % 7;
+  epochStart.setUTCDate(epochStart.getUTCDate() - daysSinceWednesday);
+  epochStart.setUTCHours(EPOCH_START_HOUR_UTC, 0, 0, 0);
+
+  if (epochStart.getTime() > now.getTime()) {
+    epochStart.setUTCDate(epochStart.getUTCDate() - 7);
+  }
+
+  const epochEndTime = epochStart.getTime() + EPOCH_DURATION_MS;
+  const elapsedMs = Math.min(
+    EPOCH_DURATION_MS,
+    Math.max(0, now.getTime() - epochStart.getTime())
+  );
+  const progress = (elapsedMs / EPOCH_DURATION_MS) * 100;
+  const remainingSeconds = Math.max(
+    0,
+    Math.ceil((epochEndTime - now.getTime()) / 1000)
+  );
 
   return {
     days: Math.floor(remainingSeconds / 86400),
@@ -38,8 +46,7 @@ export function calculateEpochCountdown(
     seconds: Math.floor(remainingSeconds % 60),
     progress,
     currentEpoch,
-    epochStartTick,
-    epochEndTick,
+    epochStartTick: initialTick,
   };
 }
 

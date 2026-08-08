@@ -18,10 +18,13 @@ async function postQueryRPC<T>(endpoint: string, body: unknown): Promise<T> {
 }
 
 export async function getTickInfo(): Promise<TickInfo> {
-  const data = await fetchRPC<{ tickInfo: { tick: number; timestamp: number } }>(
-    "/v1/tick-info"
-  );
-  return data.tickInfo;
+  const data = await fetchRPC<{ tickInfo: TickInfo }>("/v1/tick-info");
+  return {
+    tick: Number(data.tickInfo.tick),
+    duration: Number(data.tickInfo.duration),
+    epoch: Number(data.tickInfo.epoch),
+    initialTick: Number(data.tickInfo.initialTick),
+  };
 }
 
 export async function getBalance(publicId: string): Promise<WalletBalance> {

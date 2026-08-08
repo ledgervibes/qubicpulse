@@ -16,7 +16,9 @@ export interface WalletBalance {
 
 export interface TickInfo {
   tick: number;
-  timestamp: number;
+  duration: number;
+  epoch: number;
+  initialTick: number;
 }
 
 export interface NetworkStatus {
