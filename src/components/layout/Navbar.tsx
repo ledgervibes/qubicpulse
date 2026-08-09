@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Settings as SettingsIcon } from "lucide-react";
 import { useState } from "react";
 import { NAV_ITEMS, APP_NAME } from "../../utils/constants";
 import { ThemeToggle } from "../ui/ThemeToggle";
@@ -55,20 +55,19 @@ export function Navbar() {
             </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1">
-            {NAV_ITEMS.map((item) => {
+          <nav className="hidden items-center gap-5 md:flex" aria-label="Primary navigation">
+            {NAV_ITEMS.filter((item) => item.path !== "/settings").map((item) => {
               const active = location.pathname === item.path;
               return (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`relative flex items-center px-1 py-2 text-sm font-medium transition-colors after:absolute after:inset-x-1 after:-bottom-[1px] after:h-0.5 after:origin-left after:rounded-full after:bg-qubic-cyan after:transition-transform ${
                     active
-                      ? "bg-qubic-cyan/10 text-qubic-cyan"
-                      : "text-text-muted hover:text-text-primary hover:bg-bg-elevated"
+                      ? "text-qubic-cyan after:scale-x-100"
+                      : "text-text-muted after:scale-x-0 hover:text-text-primary hover:after:scale-x-100"
                   }`}
                 >
-                  {iconMap[item.icon]}
                   {item.label}
                 </Link>
               );
@@ -77,6 +76,18 @@ export function Navbar() {
 
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
+            <Link
+              to="/settings"
+              className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-colors ${
+                location.pathname === "/settings"
+                  ? "border-qubic-cyan/30 bg-qubic-cyan/10 text-qubic-cyan"
+                  : "border-transparent text-text-muted hover:border-bg-hover hover:bg-bg-elevated hover:text-text-primary"
+              }`}
+              aria-label="Settings"
+              title="Settings"
+            >
+              <SettingsIcon className="h-4 w-4" />
+            </Link>
           </div>
 
           <div className="flex md:hidden items-center gap-2">

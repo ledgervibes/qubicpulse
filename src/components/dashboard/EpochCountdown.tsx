@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Activity, Clock } from "lucide-react";
+import { Activity, Clock, Radio, Zap } from "lucide-react";
 import { getTickInfo } from "../../services/qubic-rpc";
 import type { TickInfo } from "../../types";
 import {
@@ -70,15 +70,17 @@ export function EpochCountdown() {
   if (!countdown) return null;
 
   return (
-    <section className="data-surface p-4 sm:p-5" aria-label="Qubic network epoch status">
-      <div className="grid gap-4 sm:grid-cols-[auto_1fr_auto] sm:items-center">
+    <section className="observatory-shell p-4 sm:p-5" aria-label="Qubic network pulse">
+      <div className="observatory-grid pointer-events-none absolute inset-0 opacity-70" />
+      <div className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full border border-qubic-cyan/15 orbit-ring" />
+      <div className="relative grid gap-5 sm:grid-cols-[auto_1fr_auto] sm:items-center">
         <div>
           <div className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-qubic-cyan">
             <span className="relative flex h-2 w-2">
               <span className="absolute h-full w-full animate-ping rounded-full bg-success opacity-60" />
               <span className="relative h-2 w-2 rounded-full bg-success" />
             </span>
-            Network live
+            Network pulse
           </div>
           <div className="flex items-end gap-3">
             <span className="font-heading text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">
@@ -86,12 +88,16 @@ export function EpochCountdown() {
             </span>
             <span className="mb-1 text-xs text-text-muted">current epoch</span>
           </div>
+          <div className="mt-2 flex items-center gap-2 text-xs text-text-muted">
+            <Radio className="h-3.5 w-3.5 text-qubic-cyan" />
+            Tick <span className="font-mono text-text-secondary">{tickInfo?.tick.toLocaleString()}</span>
+          </div>
         </div>
 
         <div>
           <div className="mb-3 flex items-center justify-between gap-3">
             <span className="flex items-center gap-2 text-xs font-medium text-text-secondary">
-              <Activity className="h-3.5 w-3.5 text-qubic-cyan" />
+              <Zap className="h-3.5 w-3.5 text-qubic-gold" />
               Epoch progress
             </span>
             <span className="font-mono text-xs text-text-muted">
@@ -104,8 +110,9 @@ export function EpochCountdown() {
               style={{ width: `${countdown.progress}%` }}
             />
           </div>
-          <div className="mt-3 flex items-center gap-2 text-xs text-text-muted">
-            Next epoch begins after the countdown
+          <div className="signal-rail mt-3 flex items-center gap-2 py-2 text-[10px] uppercase tracking-[0.12em] text-text-muted">
+            <Activity className="h-3 w-3 text-qubic-cyan" />
+            Live epoch signal
           </div>
         </div>
 
