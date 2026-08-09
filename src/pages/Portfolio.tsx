@@ -5,12 +5,14 @@ import { formatBalance, formatCurrency } from "../utils/format";
 import { QUBIC_ADDRESS_REGEX } from "../utils/constants";
 import { WalletCard } from "../components/portfolio/WalletCard";
 import { TokenHoldings } from "../components/portfolio/TokenHoldings";
-import { Eye, Plus, RefreshCw, ShieldCheck, Wallet } from "lucide-react";
+import { CircleAlert, Eye, Plus, RefreshCw, ShieldCheck, Wallet } from "lucide-react";
 
 export function Portfolio() {
   const wallets = useWalletStore((s) => s.wallets);
   const balances = useWalletStore((s) => s.balances);
   const loading = useWalletStore((s) => s.loading);
+  const failedAddresses = useWalletStore((s) => s.failedAddresses);
+  const lastFetched = useWalletStore((s) => s.lastFetched);
   const addWallet = useWalletStore((s) => s.addWallet);
   const refreshBalances = useWalletStore((s) => s.refreshBalances);
   const price = usePriceStore((s) => s.price);
@@ -46,6 +48,8 @@ export function Portfolio() {
     (sum, wallet) => sum + (balances.get(wallet.address)?.numberOfTransfers ?? 0),
     0
   );
+  const addressValid = QUBIC_ADDRESS_REGEX.test(address.toUpperCase());
+  const duplicateAddress = wallets.some((wallet) => wallet.address === address.toUpperCase());
 
   return (
     <div className="space-y-5 sm:space-y-6">
@@ -127,12 +131,15 @@ export function Portfolio() {
                 className="min-h-11 w-full rounded-xl border border-bg-hover bg-bg-elevated px-3 font-mono text-sm text-text-primary placeholder:text-text-disabled focus:border-qubic-cyan/50"
               />
               <div className="mt-1 text-right font-mono text-[10px] text-text-disabled">{address.length}/60</div>
+              {address.length > 0 && !addressValid && <div className="mt-1 text-xs text-warning">A Qubic address must contain exactly 60 uppercase characters.</div>}
+              {duplicateAddress && <div className="mt-1 text-xs text-danger">This address is already tracked.</div>}
             </div>
           </div>
           {error && <p role="alert" className="mt-2 text-sm text-danger">{error}</p>}
           <div className="flex gap-2 mt-4">
             <button
               onClick={handleAdd}
+              disabled={!addressValid || duplicateAddress}
               className="btn-primary min-h-11"
             >
               Add Wallet
@@ -147,6 +154,13 @@ export function Portfolio() {
         </section>
       )}
 
+      {wallets.length > 0 && failedAddresses.length > 0 && (
+        <div className="data-surface flex items-start gap-3 border-warning/25 p-4" role="status">
+          <CircleAlert className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
+          <div><div className="text-sm font-medium text-text-primary">{failedAddresses.length} address{failedAddresses.length > 1 ? "es" : ""} could not be refreshed</div><div className="mt-1 text-xs text-text-muted">The last available balances remain visible. Try refreshing again in a moment.</div></div>
+        </div>
+      )}
+
       {wallets.length > 0 && (
         <section className="hero-surface p-5 sm:p-7" aria-label="Portfolio overview">
           <div className="pointer-events-none absolute -right-14 -top-20 h-60 w-60 rounded-full border border-qubic-cyan/10" />
@@ -159,6 +173,7 @@ export function Portfolio() {
               <div className="mt-2 font-mono text-sm text-text-muted">
                 {formatBalance(totalBalance)} QUBIC
               </div>
+              <div className="mt-3 flex items-center gap-2 text-xs text-text-muted"><ShieldCheck className="h-3.5 w-3.5 text-success" />Watch-only data{lastFetched ? ` • refreshed ${new Date(lastFetched).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}` : ""}</div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-2xl border border-white/5 bg-bg-deep/30 p-4">

@@ -3,7 +3,7 @@ import { useWalletStore } from "../../stores/walletStore";
 import { usePriceStore } from "../../stores/priceStore";
 import { formatBalance, formatCurrency, formatAddress } from "../../utils/format";
 import { TransactionHistory } from "./TransactionHistory";
-import { Wallet, Copy, Check, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { Wallet, Copy, Check, Trash2, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 
 interface Props {
   wallet: {
@@ -56,6 +56,7 @@ export function WalletCard({ wallet }: Props) {
                     <Copy className="w-3 h-3" />
                   )}
                 </button>
+                <a href={`https://explorer.qubic.org/network/address/${wallet.address}`} target="_blank" rel="noopener noreferrer" className="flex h-7 w-7 items-center justify-center rounded-lg text-text-disabled transition-colors hover:bg-qubic-cyan/10 hover:text-qubic-cyan" aria-label={`View ${wallet.label} on Qubic Explorer`}><ExternalLink className="h-3 w-3" /></a>
               </div>
             </div>
           </div>

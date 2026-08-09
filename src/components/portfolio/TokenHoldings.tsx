@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getAssetHoldings } from "../../services/qubic-rpc";
 import { formatBalance } from "../../utils/format";
-import { Coins, Loader2 } from "lucide-react";
+import { Coins, Loader2, RefreshCw } from "lucide-react";
 
 interface Props {
   address: string;
@@ -14,10 +14,13 @@ export function TokenHoldings({ address }: Props) {
     balance: number;
   }>>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+    setError(false);
 
     getAssetHoldings(address)
       .then((data) => {
@@ -28,6 +31,7 @@ export function TokenHoldings({ address }: Props) {
       .catch(() => {
         if (!cancelled) {
           setHoldings([]);
+          setError(true);
         }
       })
       .finally(() => {
@@ -39,7 +43,7 @@ export function TokenHoldings({ address }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [address]);
+  }, [address, reloadKey]);
 
   if (loading) {
     return (
@@ -55,8 +59,9 @@ export function TokenHoldings({ address }: Props) {
         <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-qubic-gold/10">
           <Coins className="h-4 w-4 text-qubic-gold" />
         </div>
-        <p className="font-heading text-sm font-medium text-text-primary">No assets found</p>
-        <p className="mt-1 text-[11px] text-text-muted">Issued assets will appear here.</p>
+        <p className="font-heading text-sm font-medium text-text-primary">{error ? "Assets unavailable" : "No assets found"}</p>
+        <p className="mt-1 text-[11px] text-text-muted">{error ? "Qubic asset data could not be loaded." : "Issued assets will appear here."}</p>
+        {error && <button onClick={() => setReloadKey((value) => value + 1)} className="btn-tertiary mt-2"><RefreshCw className="h-3.5 w-3.5" />Retry</button>}
       </div>
     );
   }

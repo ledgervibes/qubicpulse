@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useWalletStore } from "../stores/walletStore";
 import { getEventLogs } from "../services/qubic-rpc";
 import { POLL_INTERVAL_MS } from "../utils/constants";
@@ -28,6 +28,7 @@ export function useWalletMonitor() {
   const prevBalancesRef = useRef<Map<string, { incoming: number; outgoing: number }>>(new Map());
   const notifiedRef = useRef<Set<string>>(new Set());
   const notificationsRef = useRef<WalletNotification[]>([]);
+  const [notifications, setNotifications] = useState<WalletNotification[]>([]);
 
   // Load persisted data
   const loadPrevBalances = useCallback(() => {
@@ -69,6 +70,7 @@ export function useWalletMonitor() {
     if (stored) {
       try {
         notificationsRef.current = JSON.parse(stored);
+        setNotifications(notificationsRef.current);
       } catch {
         notificationsRef.current = [];
       }
@@ -103,6 +105,7 @@ export function useWalletMonitor() {
         read: false,
       };
       notificationsRef.current = [newNotif, ...notificationsRef.current].slice(0, 100);
+      setNotifications(notificationsRef.current);
       saveNotifications();
 
       // Dispatch custom event for toast
@@ -277,6 +280,7 @@ export function useWalletMonitor() {
       notificationsRef.current = notificationsRef.current.map((n) =>
         n.id === id ? { ...n, read: true } : n
       );
+      setNotifications(notificationsRef.current);
       saveNotifications();
     },
     [saveNotifications]
@@ -287,16 +291,18 @@ export function useWalletMonitor() {
       ...n,
       read: true,
     }));
+    setNotifications(notificationsRef.current);
     saveNotifications();
   }, [saveNotifications]);
 
   const clearAll = useCallback(() => {
     notificationsRef.current = [];
+    setNotifications([]);
     saveNotifications();
   }, [saveNotifications]);
 
   return {
-    notifications: notificationsRef.current,
+    notifications,
     addNotification,
     markAsRead,
     markAllAsRead,

@@ -1,45 +1,30 @@
-import { useState, useMemo } from "react";
-import { Calculator, TrendingUp } from "lucide-react";
+import { useState } from "react";
+import { Calculator, Info, TrendingUp } from "lucide-react";
 import { formatBalance } from "../../utils/format";
-import type { QEarnStats } from "../../types";
 
 interface Props {
-  stats: QEarnStats | null;
   qbondApy: number;
   qearnApy: number;
 }
 
-export function StakingCalculator({ stats, qbondApy, qearnApy }: Props) {
+export function StakingCalculator({ qbondApy, qearnApy }: Props) {
   const [amount, setAmount] = useState<string>("1000000000");
 
-  const parsedAmount = useMemo(() => {
-    const val = parseFloat(amount.replace(/,/g, ""));
-    return isNaN(val) ? 0 : val;
-  }, [amount]);
-
-  const qearnReward = useMemo(() => {
-    if (!stats || parsedAmount <= 0) return 0;
-    const yieldRate = stats.averageAPY / 10000000;
-    return parsedAmount * yieldRate;
-  }, [parsedAmount, stats]);
-
-  const qbondReward = useMemo(() => {
-    if (parsedAmount <= 0) return 0;
-    const yieldRate = qbondApy / 10000000;
-    return parsedAmount * yieldRate;
-  }, [parsedAmount, qbondApy]);
-
-  const qearnAnnualReward = qearnReward * 52;
-  const qbondAnnualReward = qbondReward * 52;
+  const parsed = Number(amount.replace(/,/g, ""));
+  const parsedAmount = Number.isFinite(parsed) ? parsed : 0;
+  const qearnAnnualReward = parsedAmount > 0 ? parsedAmount * (qearnApy / 100) : 0;
+  const qbondAnnualReward = parsedAmount > 0 ? parsedAmount * (qbondApy / 100) : 0;
+  const qearnReward = qearnAnnualReward / 52;
+  const qbondReward = qbondAnnualReward / 52;
 
   return (
-    <section className="data-surface p-5 sm:p-6">
+    <section className="hero-surface p-5 sm:p-6" aria-labelledby="reward-estimator-title">
       <div className="flex items-center gap-3 mb-4">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-qubic-cyan/10 text-qubic-cyan">
           <Calculator className="w-4 h-4" />
         </div>
         <div>
-          <h3 className="font-heading text-lg font-semibold text-text-primary">Estimate your upside</h3>
+          <h3 id="reward-estimator-title" className="font-heading text-lg font-semibold text-text-primary">Estimate your upside</h3>
           <p className="text-xs text-text-muted">
             Estimate your staking rewards
           </p>
@@ -116,6 +101,10 @@ export function StakingCalculator({ stats, qbondApy, qearnApy }: Props) {
               Current APY: QEarn ~{qearnApy.toFixed(2)}% | QBond ~
               {qbondApy.toFixed(2)}%
             </span>
+          </div>
+          <div className="flex items-start gap-2 text-[11px] leading-5 text-text-muted">
+            <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+            Estimates use the currently reported annualized rates. Actual rewards can change and are not guaranteed.
           </div>
         </div>
       )}

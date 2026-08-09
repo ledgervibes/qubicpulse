@@ -5,7 +5,7 @@ import { QEarnCard } from "../components/staking/QEarnCard";
 import { QBondCard } from "../components/staking/QBondCard";
 import { ComparisonTable } from "../components/staking/ComparisonTable";
 import { StakingCalculator } from "../components/staking/StakingCalculator";
-import { ExternalLink, Loader2, Sparkles } from "lucide-react";
+import { CircleAlert, ExternalLink, Loader2, Sparkles } from "lucide-react";
 
 export function Staking() {
   const {
@@ -14,6 +14,7 @@ export function Staking() {
     qbondInfo,
     qbondFees,
     loading,
+    error,
     fetchAll,
   } = useStakingStore();
 
@@ -79,6 +80,18 @@ export function Staking() {
         </div>
       )}
 
+      {error && !loading && (
+        <div className="data-surface flex items-start gap-3 border-warning/25 p-4" role="status">
+          <CircleAlert className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
+          <div><div className="text-sm font-medium text-text-primary">Some staking data could not be refreshed</div><div className="mt-1 text-xs text-text-muted">Available contract data is still shown below. Values marked with a dash were not returned.</div></div>
+        </div>
+      )}
+
+      <StakingCalculator
+        qearnApy={qearnApy}
+        qbondApy={qbondApyVal}
+      />
+
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
         <QEarnCard
           lockInfo={qearnLockInfo.data}
@@ -92,18 +105,7 @@ export function Staking() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <ComparisonTable />
-        </div>
-        <div>
-          <StakingCalculator
-            stats={qearnStats.data}
-            qearnApy={qearnApy}
-            qbondApy={qbondApyVal}
-          />
-        </div>
-      </div>
+      <ComparisonTable />
     </div>
   );
 }

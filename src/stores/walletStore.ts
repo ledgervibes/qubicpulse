@@ -7,6 +7,8 @@ interface WalletStore {
   wallets: Wallet[];
   balances: Map<string, WalletBalance>;
   loading: boolean;
+  failedAddresses: string[];
+  lastFetched: number;
 
   loadWallets: () => void;
   addWallet: (address: string, label: string) => void;
@@ -18,6 +20,8 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
   wallets: [],
   balances: new Map(),
   loading: false,
+  failedAddresses: [],
+  lastFetched: 0,
 
   loadWallets: () => {
     const wallets = storage.getItem<Wallet[]>("wallets", []);
@@ -46,7 +50,8 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
   refreshBalances: async () => {
     set({ loading: true });
     const { wallets } = get();
-    const balances = new Map<string, WalletBalance>();
+    const balances = new Map(get().balances);
+    const failedAddresses: string[] = [];
 
     await Promise.allSettled(
       wallets.map(async (w) => {
@@ -54,11 +59,11 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
           const bal = await rpc.getBalance(w.address);
           balances.set(w.address, bal);
         } catch {
-          // skip failed wallets
+          failedAddresses.push(w.address);
         }
       })
     );
 
-    set({ balances, loading: false });
+    set({ balances, failedAddresses, lastFetched: Date.now(), loading: false });
   },
 }));

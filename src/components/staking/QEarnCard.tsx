@@ -47,13 +47,6 @@ export function QEarnCard({ lockInfo, stats, loading }: Props) {
           <span className="font-heading text-3xl font-semibold text-success">{apy > 0 ? `${apy.toFixed(2)}%` : "—"}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-sm text-text-muted">APY</span>
-          <span className="text-sm font-semibold text-success">
-            {apy > 0 ? `${apy.toFixed(2)}%` : "—"}
-          </span>
-        </div>
-
-        <div className="flex items-center justify-between">
           <span className="text-sm text-text-muted">Lock Period</span>
           <span className="text-sm font-medium text-text-primary">
             52 epochs
