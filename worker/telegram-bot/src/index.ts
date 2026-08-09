@@ -98,42 +98,6 @@ async function getEventLogs(
 }
 
 async function getPrice(env: Env): Promise<{ usd: number; change24h: number; change7d: number } | null> {
-  try {
-    const res = await fetch("https://api.coinpaprika.com/v1/tickers/qu-qubic/?quotes=USD");
-    if (res.ok) {
-      const data: any = await res.json();
-      const quote = data?.quotes?.USD;
-      if (quote?.price > 0) {
-        return {
-          usd: quote.price,
-          change24h: quote.percent_change_24h || 0,
-          change7d: quote.percent_change_7d || 0,
-        };
-      }
-    }
-  } catch (e) {
-    console.error("CoinPaprika failed:", e);
-  }
-
-  try {
-    const res = await fetch(
-      "https://api.coingecko.com/api/v3/simple/price?ids=qubic-network&vs_currencies=usd&include_24hr_change=true&include_7d_change=true"
-    );
-    if (res.ok) {
-      const data: any = await res.json();
-      const q = data?.["qubic-network"];
-      if (q?.usd > 0) {
-        return {
-          usd: q.usd,
-          change24h: q.usd_24h_change || 0,
-          change7d: q.usd_7d_change || 0,
-        };
-      }
-    }
-  } catch (e) {
-    console.error("CoinGecko failed:", e);
-  }
-
   if (env.CMC_API_KEY) {
     try {
       const res = await fetch(
@@ -154,6 +118,42 @@ async function getPrice(env: Env): Promise<{ usd: number; change24h: number; cha
     } catch (e) {
       console.error("CoinMarketCap failed:", e);
     }
+  }
+
+  try {
+    const res = await fetch("https://api.coinpaprika.com/v1/tickers/qu-qubic/?quotes=USD");
+    if (res.ok) {
+      const data: any = await res.json();
+      const quote = data?.quotes?.USD;
+      if (quote?.price > 0) {
+        return {
+          usd: quote.price,
+          change24h: quote.percent_change_24h || 0,
+          change7d: quote.percent_change_7d || 0,
+        };
+      }
+    }
+  } catch (e) {
+    console.error("CoinPaprika failed:", e);
+  }
+
+  try {
+    const res = await fetch(
+      "https://api.coingecko.com/api/v3/simple/price?ids=qubic-network&vs_currencies=usd&include_24hr_change=true"
+    );
+    if (res.ok) {
+      const data: any = await res.json();
+      const q = data?.["qubic-network"];
+      if (q?.usd > 0) {
+        return {
+          usd: q.usd,
+          change24h: q.usd_24h_change || 0,
+          change7d: 0,
+        };
+      }
+    }
+  } catch (e) {
+    console.error("CoinGecko failed:", e);
   }
 
   return null;
