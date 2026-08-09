@@ -13,10 +13,10 @@ An all-in-one dashboard for the Qubic ecosystem. Track portfolios, set price ale
 ## Features
 
 - **Portfolio Tracking** — Multi-wallet support with real-time balance and USD valuation
-- **Price Alerts** — Browser notifications + Telegram delivery
+- **Price Alerts** — Browser alerts plus bot-managed Telegram alerts
 - **Transaction Monitoring** — Real-time notifications for ALL tokens (QUBIC + assets)
 - **DeFi Dashboard** — Live market data, volume charts, QX DEX integration
-- **Telegram Notifications** — @qubit_pulse_bot for mobile alerts
+- **Telegram Bot** — @qubic_pulse_bot manages wallets, transaction alerts, price alerts, and QEarn notifications
 - **Light/Dark Mode** — Theme toggle with system preference support
 - **Mobile Responsive** — Optimized for all screen sizes
 - **Glassmorphism UI** — Modern, premium design language
@@ -29,7 +29,7 @@ An all-in-one dashboard for the Qubic ecosystem. Track portfolios, set price ale
 - Recharts (data visualization)
 - Qubic RPC API + Event Logs API
 - CoinGecko + CoinPaprika + CoinMarketCap APIs
-- Cloudflare Workers (server-side Telegram bot proxy)
+- Cloudflare Workers (server-side CoinMarketCap proxy)
 - Cloudflare Pages (hosting)
 
 ## Development
@@ -43,12 +43,11 @@ Copy `.env.example` to `.env.local` when enabling optional integrations. Never c
 
 Environment variables:
 
-- `VITE_TELEGRAM_API_URL` — base URL of the server-side Telegram proxy. The Telegram bot token must only exist as a Cloudflare Worker secret.
 - `VITE_CMC_API_URL` — server-side CoinMarketCap proxy URL. The CMC key must only exist as a Cloudflare Worker secret.
 
-CoinMarketCap and Telegram are optional server-side integrations. CoinGecko and CoinPaprika remain the public price sources. The Worker exposes `/telegram/sendMessage`, `/price`, and `/health`.
+CoinMarketCap is an optional server-side integration. CoinGecko and CoinPaprika remain the public price sources. The API Worker exposes `/price` and `/health`.
 
-Telegram uses a manual Chat ID flow and does not require a webhook or database. Users start `@qubic_pulse_bot`, obtain their Chat ID, save it locally in Settings, and send a test notification through the Worker.
+Telegram is managed independently by `@qubic_pulse_bot`. The website only links to the bot; it does not collect Chat IDs or send Telegram messages from the browser.
 
 ## Build
 
@@ -68,12 +67,11 @@ npm run build
 
 Production is hosted on Cloudflare Pages at `qubicpulse.pages.dev`. The repository workflow validates lint, tests, and build; deploy the generated `dist` directory through the connected Cloudflare Pages project.
 
-Deploy the optional API Worker and set its encrypted secrets interactively:
+Deploy the optional API Worker and set its encrypted secret interactively:
 
 ```bash
 npm run worker:deploy
-npx wrangler secret put TELEGRAM_BOT_TOKEN --config worker/wrangler.jsonc
 npx wrangler secret put CMC_API_KEY --config worker/wrangler.jsonc
 ```
 
-Set `VITE_TELEGRAM_API_URL` and `VITE_CMC_API_URL` to the deployed Worker base URL in the Cloudflare Pages build environment. Never put either secret in a `VITE_*` variable.
+Set `VITE_CMC_API_URL` to the deployed Worker base URL in the Cloudflare Pages build environment. Never put the CMC key in a `VITE_*` variable.

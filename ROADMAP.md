@@ -15,7 +15,7 @@
 - Cloudflare Pages deployment
 
 ### Phase 2 — Telegram Bot & Smart Alerts ✅
-- Telegram bot (@qubit_pulse_bot) with wallet management
+- Telegram bot (@qubic_pulse_bot) with wallet management
 - Real-time transaction notifications (QUBIC + multi-token)
 - Price alerts with browser + Telegram delivery
 - Multi-token portfolio support via Qubic Event Logs API
@@ -90,5 +90,5 @@
 
 **Live**: [qubicpulse.pages.dev](https://qubicpulse.pages.dev)  
 **GitHub**: [github.com/ledgervibes/qubicpulse](https://github.com/ledgervibes/qubicpulse)
-**Telegram**: [@qubit_pulse_bot](https://t.me/qubit_pulse_bot)  
+**Telegram**: [@qubic_pulse_bot](https://t.me/qubic_pulse_bot)
 **Last updated**: 2026-08-01

@@ -5,10 +5,6 @@ export const COINGECKO_API_URL = "https://api.coingecko.com/api/v3";
 
 export const QUBIC_COINGECKO_ID = "qubic-network";
 
-// Credentials stay server-side. Telegram is an optional integration.
-export const TELEGRAM_API_URL = import.meta.env.VITE_TELEGRAM_API_URL as
-  | string
-  | undefined;
 export const CMC_API_URL = import.meta.env.VITE_CMC_API_URL as
   | string
   | undefined;

@@ -1,10 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { usePriceStore } from "../stores/priceStore";
-import { useNotificationStore } from "../stores/notificationStore";
 import { useAlertStore } from "../stores/alertStore";
 import { useWalletMonitor } from "../hooks/useWalletMonitor";
 import { formatCurrency, formatBalance, timeAgo } from "../utils/format";
-import { sendPriceAlert } from "../services/telegram";
 import * as notif from "../services/notification";
 import {
   Bell,
@@ -38,8 +36,6 @@ export function Alerts() {
   const toggleAlert = useAlertStore((s) => s.toggleAlert);
   const addToHistory = useAlertStore((s) => s.addToHistory);
 
-  const telegramChatId = useNotificationStore((s) => s.telegramChatId);
-  const connected = useNotificationStore((s) => s.connected);
 
   const { notifications, markAllAsRead } = useWalletMonitor();
 
@@ -94,19 +90,16 @@ export function Alerts() {
 
         notif.sendNotification("QubicPulse Price Alert", message);
 
-        if (connected && telegramChatId) {
-          sendPriceAlert(telegramChatId, alert.condition, alert.targetPrice, currentPrice).catch(console.error);
-        }
 
         addToHistory({
           alertId: alert.id,
           message,
-          sentToTelegram: connected,
+          sentToTelegram: false,
           sentToBrowser: notifEnabled,
         });
       }
     });
-  }, [price, alerts, connected, telegramChatId, notifEnabled, addToHistory]);
+  }, [price, alerts, notifEnabled, addToHistory]);
 
   useEffect(() => {
     checkAlerts();
