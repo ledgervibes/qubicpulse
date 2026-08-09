@@ -164,6 +164,47 @@
     box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
   }
 
+  .observatory-shell {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(37, 202, 217, 0.22);
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at 18% 20%, rgba(37, 202, 217, 0.2), transparent 24%),
+      radial-gradient(circle at 82% 10%, rgba(126, 87, 194, 0.16), transparent 27%),
+      linear-gradient(135deg, rgba(13, 24, 35, 0.98), rgba(8, 12, 20, 0.96));
+    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.3), inset 0 1px rgba(255, 255, 255, 0.06);
+  }
+
+  .observatory-grid {
+    background-image:
+      linear-gradient(rgba(97, 240, 254, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(97, 240, 254, 0.04) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: linear-gradient(to bottom, black, transparent 85%);
+  }
+
+  .orbit-ring {
+    border: 1px solid rgba(97, 240, 254, 0.2);
+    border-radius: 999px;
+    box-shadow: 0 0 28px rgba(37, 202, 217, 0.08), inset 0 0 20px rgba(37, 202, 217, 0.05);
+  }
+
+  .signal-rail {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(4, 9, 16, 0.32);
+  }
+
+  .observatory-glow {
+    animation: observatoryGlow 6s ease-in-out infinite;
+  }
+
+  @keyframes observatoryGlow {
+    0%, 100% { opacity: 0.5; transform: scale(0.96); }
+    50% { opacity: 0.9; transform: scale(1.04); }
+  }
+
   [data-theme="light"] .hero-surface {
     background:
       radial-gradient(circle at 88% 18%, rgba(37, 202, 217, 0.14), transparent 34%),
@@ -333,6 +374,10 @@
 
     .hero-surface {
       border-radius: 18px;
+    }
+
+    .observatory-shell {
+      border-radius: 20px;
     }
   }
 
