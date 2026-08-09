@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { usePriceStore } from "../stores/priceStore";
 import { formatCurrency, formatPercent, formatBalance } from "../utils/format";
-import { TrendingUp, TrendingDown, ExternalLink, Clock, Layers, Activity, Loader2 } from "lucide-react";
+import { TrendingUp, TrendingDown, ExternalLink, Clock, Layers, Activity, Loader2, Radar } from "lucide-react";
 import type { PriceHistory } from "../types";
 import { getPriceHistory } from "../services/coingecko";
 import { getTopAssets } from "../services/qx-contract";
@@ -84,19 +84,23 @@ export function Defi() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold text-text-primary">
-          DeFi
+        <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-qubic-cyan">
+          <Radar className="h-3.5 w-3.5" />
+          Ecosystem intelligence
+        </div>
+        <h1 className="font-heading text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
+          What is moving on Qubic?
         </h1>
-        <p className="text-sm text-text-muted mt-1">
-          Qubic ecosystem market data
+        <p className="mt-2 text-sm text-text-muted sm:text-base">
+          Market activity, QX assets, and network signals in one view.
         </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {stats.map((stat) => (
-          <div key={stat.label} className="glass-card p-5">
+          <div key={stat.label} className="data-surface p-4 sm:p-5">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-text-muted">{stat.label}</span>
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-qubic-cyan/10 text-qubic-cyan">
@@ -125,7 +129,7 @@ export function Defi() {
       </div>
 
       {/* Top Assets on QX */}
-      <div className="glass-card p-5">
+      <div className="data-surface overflow-hidden p-4 sm:p-5">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-heading font-semibold text-text-primary text-lg">
             Top Assets on QX DEX
@@ -260,7 +264,7 @@ export function Defi() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="glass-card p-5">
+        <div className="data-surface p-5">
           <h3 className="font-heading font-semibold text-text-primary mb-4 text-lg">
             Qubic Ecosystem
           </h3>
@@ -290,7 +294,7 @@ export function Defi() {
           </div>
         </div>
 
-        <div className="glass-card p-5">
+        <div className="data-surface p-5">
           <h3 className="font-heading font-semibold text-text-primary mb-4 text-lg">
             About Qubic DeFi
           </h3>

@@ -10,6 +10,7 @@ import {
   Check,
   ExternalLink,
   Send,
+  ShieldCheck,
 } from "lucide-react";
 
 export function Settings() {
@@ -49,23 +50,27 @@ export function Settings() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold text-text-primary">
-          Settings
+        <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+          <SettingsIcon className="h-3.5 w-3.5" />
+          Workspace preferences
+        </div>
+        <h1 className="font-heading text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
+          Make QubicPulse yours.
         </h1>
-        <p className="text-sm text-text-muted mt-1">
-          Manage your {APP_NAME} preferences
+        <p className="mt-2 text-sm text-text-muted sm:text-base">
+          Manage notifications, backups, and support for your local workspace.
         </p>
       </div>
 
       {message && (
-        <div className="rounded-lg bg-qubic-cyan/10 border border-qubic-cyan/30 px-4 py-3 text-sm text-qubic-cyan">
+        <div role="status" className="data-surface border-qubic-cyan/30 px-4 py-3 text-sm text-qubic-cyan">
           {message}
         </div>
       )}
 
-      <div className="glass-card p-5">
+      <section className="data-surface p-5 sm:p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-8 w-8 rounded-lg bg-info/10 flex items-center justify-center text-info">
@@ -96,9 +101,10 @@ export function Settings() {
             Open the bot to add wallets and configure transaction, price, and QEarn reward notifications.
           </p>
         </div>
-      </div>
+        <div className="mt-4 flex items-center gap-2 border-t border-white/5 pt-4 text-xs text-text-muted"><ShieldCheck className="h-4 w-4 text-success" /> Telegram is an optional companion, not required for the dashboard.</div>
+      </section>
 
-      <div className="glass-card p-5">
+      <section className="data-surface p-5 sm:p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-8 w-8 rounded-lg bg-qubic-gold/10 flex items-center justify-center text-qubic-gold">
             <Coffee className="w-4 h-4" />
@@ -138,9 +144,9 @@ export function Settings() {
             View on Explorer <ExternalLink className="w-3 h-3" />
           </a>
         </div>
-      </div>
+      </section>
 
-      <div className="glass-card p-5">
+      <section className="data-surface p-5 sm:p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-8 w-8 rounded-lg bg-info/10 flex items-center justify-center text-info">
             <Download className="w-4 h-4" />
@@ -161,9 +167,9 @@ export function Settings() {
           <Download className="w-4 h-4" />
           Export Backup
         </button>
-      </div>
+      </section>
 
-      <div className="glass-card p-5">
+      <section className="data-surface p-5 sm:p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-8 w-8 rounded-lg bg-warning/10 flex items-center justify-center text-warning">
             <Upload className="w-4 h-4" />
@@ -192,9 +198,9 @@ export function Settings() {
           <Upload className="w-4 h-4" />
           Import Data
         </button>
-      </div>
+      </section>
 
-      <div className="glass-card p-5">
+      <section className="data-surface p-5 sm:p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-8 w-8 rounded-lg bg-qubic-cyan/10 flex items-center justify-center text-qubic-cyan">
             <SettingsIcon className="w-4 h-4" />
@@ -243,7 +249,7 @@ export function Settings() {
             </a>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

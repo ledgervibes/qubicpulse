@@ -36,11 +36,10 @@ function CellValue({ value }: { value: string | boolean }) {
 
 export function ComparisonTable() {
   return (
-    <div className="glass-card overflow-hidden">
-      <div className="p-4 border-b border-bg-hover">
-        <h3 className="font-heading font-semibold text-text-primary">
-          Feature Comparison
-        </h3>
+    <section className="data-surface overflow-hidden">
+      <div className="border-b border-white/5 p-4 sm:p-5">
+        <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-qubic-cyan">Make the tradeoff visible</div>
+        <h3 className="mt-1 font-heading text-lg font-semibold text-text-primary">Feature comparison</h3>
         <p className="text-xs text-text-muted mt-1">
           Compare QEarn and QBond staking options
         </p>
@@ -78,6 +77,6 @@ export function ComparisonTable() {
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
   );
 }

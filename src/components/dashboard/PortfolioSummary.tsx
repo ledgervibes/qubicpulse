@@ -17,28 +17,32 @@ export function PortfolioSummary() {
   const totalValue = price ? totalBalance * price.usd : 0;
 
   return (
-    <div className="glass-card p-5">
+    <div className="data-surface h-full p-5 sm:p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-heading font-semibold text-text-primary text-lg">
-          Portfolio
-        </h3>
+        <div>
+          <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-qubic-gold">Your position</div>
+          <h2 className="font-heading text-xl font-semibold text-text-primary">Portfolio</h2>
+        </div>
         <Link
           to="/portfolio"
           className="text-xs text-qubic-cyan hover:text-qubic-cyan-light transition-colors font-medium"
         >
-          View All →
+          View all
         </Link>
       </div>
 
       {wallets.length === 0 ? (
-        <div className="text-center py-8">
-          <Wallet className="w-10 h-10 text-text-disabled mx-auto mb-3" />
-          <p className="text-sm text-text-muted mb-2">No wallets added yet</p>
+        <div className="py-8 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-qubic-cyan/10 ring-1 ring-qubic-cyan/20">
+            <Wallet className="h-5 w-5 text-qubic-cyan" />
+          </div>
+          <p className="font-heading text-base font-medium text-text-primary">Your Qubic view starts here</p>
+          <p className="mx-auto mt-2 max-w-64 text-xs leading-5 text-text-muted">Add a public address to track balances and portfolio value.</p>
           <Link
             to="/portfolio"
-            className="text-sm text-qubic-cyan hover:text-qubic-cyan-light transition-colors font-medium"
+            className="btn-gradient mt-5"
           >
-            Add your first wallet →
+            Add first wallet
           </Link>
         </div>
       ) : (

@@ -49,9 +49,9 @@ export function StatCards({ activePeriod = 7 }: Props) {
 
   if (loading && !price) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="glass-card p-5">
+          <div key={i} className="data-surface p-4 sm:p-5">
             <div className="skeleton h-4 w-24 mb-3" />
             <div className="skeleton h-7 w-32 mb-2" />
             <div className="skeleton h-3 w-16" />
@@ -62,17 +62,17 @@ export function StatCards({ activePeriod = 7 }: Props) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {cards.map((card) => (
-        <div key={card.label} className="glass-card p-5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs text-text-muted font-medium uppercase tracking-wider">{card.label}</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-qubic-cyan/10 text-qubic-cyan">
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {cards.map((card, index) => (
+        <div key={card.label} className={`data-surface min-w-0 p-4 sm:p-5 ${index === 0 ? "col-span-2 lg:col-span-1" : ""}`}>
+          <div className="mb-4 flex items-center justify-between gap-2">
+            <span className="truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">{card.label}</span>
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-qubic-cyan/8 text-qubic-cyan">
               {card.icon}
             </div>
           </div>
           <div className="flex items-baseline gap-2">
-            <div className="text-xl font-heading font-bold text-text-primary">
+            <div className="min-w-0 truncate font-heading text-xl font-semibold tracking-tight text-text-primary sm:text-2xl">
               {card.value}
             </div>
             {card.change !== undefined && (
@@ -82,11 +82,11 @@ export function StatCards({ activePeriod = 7 }: Props) {
             )}
           </div>
           {card.sub && (
-            <div className="text-xs text-text-muted mt-1">{card.sub}</div>
+            <div className="mt-1 truncate font-mono text-[11px] text-text-muted">{card.sub}</div>
           )}
           {card.sparkline && card.sparkline.length > 0 && (
-            <div className="mt-3">
-              <Sparkline data={card.sparkline} width={120} height={32} positive={isPositive} />
+            <div className="mt-1 overflow-hidden">
+              <Sparkline data={card.sparkline} width={132} height={38} positive={isPositive} />
             </div>
           )}
         </div>

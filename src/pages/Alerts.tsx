@@ -11,7 +11,6 @@ import {
   TrendingUp,
   TrendingDown,
   BellRing,
-  BarChart3,
   ArrowDownLeft,
   ArrowUpRight,
   CheckCheck,
@@ -21,9 +20,7 @@ import {
 const ALERT_TYPES = [
   { id: "price_above", label: "Price Above", icon: TrendingUp, color: "success" },
   { id: "price_below", label: "Price Below", icon: TrendingDown, color: "danger" },
-  { id: "price_change", label: "Price Change %", icon: BarChart3, color: "warning" },
-  { id: "volume_spike", label: "Volume Spike", icon: BarChart3, color: "info" },
-];
+] as const;
 
 type TabType = "price" | "wallet";
 
@@ -42,7 +39,6 @@ export function Alerts() {
   const [activeTab, setActiveTab] = useState<TabType>("price");
   const [showAdd, setShowAdd] = useState(false);
   const [targetPrice, setTargetPrice] = useState("");
-  const [condition, setCondition] = useState<"above" | "below">("above");
   const [alertType, setAlertType] = useState("price_above");
   const [notifEnabled, setNotifEnabled] = useState(
     notif.isSupported() && Notification.permission === "granted"
@@ -108,21 +104,25 @@ export function Alerts() {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold text-text-primary">
-          Alerts
+        <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-warning">
+          <BellRing className="h-3.5 w-3.5" />
+          Stay ahead of the move
+        </div>
+        <h1 className="font-heading text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
+          Alerts that watch Qubic for you.
         </h1>
-        <p className="text-sm text-text-muted mt-1">
-          Price alerts and wallet notifications
+        <p className="mt-2 text-sm text-text-muted sm:text-base">
+          Set a signal once, then let QubicPulse monitor price and wallet activity.
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-bg-elevated/50 rounded-lg p-1 w-full sm:w-fit">
+      <div className="flex w-full gap-1 rounded-xl border border-white/5 bg-bg-elevated/50 p-1 sm:w-fit">
         <button
           onClick={() => setActiveTab("price")}
-          className={`flex-1 sm:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+            className={`min-h-10 flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all sm:flex-none ${
             activeTab === "price"
               ? "bg-qubic-cyan text-bg-deep shadow-sm"
               : "text-text-muted hover:text-text-primary"
@@ -133,7 +133,7 @@ export function Alerts() {
         </button>
         <button
           onClick={() => setActiveTab("wallet")}
-          className={`flex-1 sm:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+            className={`min-h-10 flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all sm:flex-none ${
             activeTab === "wallet"
               ? "bg-qubic-cyan text-bg-deep shadow-sm"
               : "text-text-muted hover:text-text-primary"
@@ -168,7 +168,7 @@ export function Alerts() {
           </div>
 
           {notif.isSupported() && !notifEnabled && (
-            <div className="glass-card p-4 flex items-center justify-between">
+             <div className="data-surface flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
                 <BellRing className="w-5 h-5 text-warning" />
                 <div>
@@ -190,7 +190,7 @@ export function Alerts() {
           )}
 
           {price && (
-            <div className="glass-card p-5">
+             <div className="hero-surface p-5 sm:p-6">
               <div className="text-sm text-text-muted">Current Price</div>
               <div className="text-2xl font-heading font-bold text-text-primary">
                 {formatCurrency(price.usd)}
@@ -199,11 +199,11 @@ export function Alerts() {
           )}
 
           {showAdd && (
-            <div className="glass-card p-5 border-qubic-cyan/30">
+             <div className="data-surface border-qubic-cyan/30 p-5 sm:p-6">
               <h3 className="font-heading font-semibold text-text-primary mb-4">
                 Create Alert
               </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+              <div className="mb-4 grid grid-cols-2 gap-2 sm:w-fit">
                 {ALERT_TYPES.map((type) => {
                   const Icon = type.icon;
                   return (
@@ -223,39 +223,15 @@ export function Alerts() {
                 })}
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex rounded-lg overflow-hidden border border-bg-hover">
-                  <button
-                    onClick={() => setCondition("above")}
-                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
-                      condition === "above"
-                        ? "bg-success/20 text-success"
-                        : "text-text-muted hover:text-text-primary"
-                    }`}
-                  >
-                    <TrendingUp className="w-4 h-4" />
-                    Above
-                  </button>
-                  <button
-                    onClick={() => setCondition("below")}
-                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
-                      condition === "below"
-                        ? "bg-danger/20 text-danger"
-                        : "text-text-muted hover:text-text-primary"
-                    }`}
-                  >
-                    <TrendingDown className="w-4 h-4" />
-                    Below
-                  </button>
-                </div>
                 <input
                   type="number"
                   value={targetPrice}
                   onChange={(e) => setTargetPrice(e.target.value)}
                   placeholder="0.000001"
                   step="0.0000001"
-                  className="flex-1 px-3 py-2 rounded-lg bg-bg-elevated border border-bg-hover text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-qubic-cyan/50 text-sm"
+                   className="min-h-11 flex-1 rounded-xl border border-bg-hover bg-bg-elevated px-3 text-sm text-text-primary placeholder:text-text-disabled focus:border-qubic-cyan/50"
                 />
-                <button onClick={handleAdd} className="btn-gradient">
+                <button onClick={handleAdd} disabled={!targetPrice} className="btn-gradient disabled:cursor-not-allowed disabled:opacity-50">
                   Create
                 </button>
               </div>
@@ -264,7 +240,7 @@ export function Alerts() {
 
           <div className="space-y-3">
             {alerts.length === 0 ? (
-              <div className="text-center py-16 glass-card">
+               <div className="data-surface py-16 text-center">
                 <Bell className="w-12 h-12 text-text-disabled mx-auto mb-4" />
                 <p className="text-text-muted">No alerts set</p>
               </div>
@@ -272,7 +248,7 @@ export function Alerts() {
               alerts.map((alert) => {
                 const isTriggered = triggeredRef.current.has(alert.id);
                 return (
-                  <div key={alert.id} className="glass-card p-5 flex items-center justify-between">
+                   <div key={alert.id} className="data-surface flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
                     <div className="flex items-center gap-3">
                       <div className={`h-10 w-10 rounded-full flex items-center justify-center ${alert.condition === "above" ? "bg-success/10 text-success" : "bg-danger/10 text-danger"}`}>
                         {isTriggered ? <BellRing className="w-5 h-5 text-warning" /> : alert.condition === "above" ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
@@ -321,7 +297,7 @@ export function Alerts() {
           </div>
 
           {notifications.length === 0 ? (
-            <div className="text-center py-16 glass-card">
+             <div className="data-surface py-16 text-center">
               <ArrowDownLeft className="w-12 h-12 text-text-disabled mx-auto mb-4" />
               <p className="text-text-muted">No wallet notifications yet</p>
               <p className="text-xs text-text-disabled mt-1">
@@ -335,7 +311,7 @@ export function Alerts() {
                 return (
                   <div
                     key={notif.id}
-                    className={`glass-card p-4 flex items-center gap-3 ${
+                     className={`data-surface flex items-center gap-3 p-4 ${
                       !notif.read ? "border-qubic-cyan/20" : ""
                     }`}
                   >

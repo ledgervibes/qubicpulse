@@ -21,6 +21,8 @@ export function ThemeToggle() {
               : "text-text-muted hover:text-text-primary"
           }`}
           title={label}
+          aria-label={`Use ${label.toLowerCase()} theme`}
+          aria-pressed={theme === value}
         >
           <Icon className="w-3.5 h-3.5" />
         </button>

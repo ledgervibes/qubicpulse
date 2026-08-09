@@ -33,15 +33,13 @@ export function StakingCalculator({ stats, qbondApy, qearnApy }: Props) {
   const qbondAnnualReward = qbondReward * 52;
 
   return (
-    <div className="glass-card p-5">
+    <section className="data-surface p-5 sm:p-6">
       <div className="flex items-center gap-3 mb-4">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-qubic-cyan/10 text-qubic-cyan">
           <Calculator className="w-4 h-4" />
         </div>
         <div>
-          <h3 className="font-heading font-semibold text-text-primary">
-            Staking Calculator
-          </h3>
+          <h3 className="font-heading text-lg font-semibold text-text-primary">Estimate your upside</h3>
           <p className="text-xs text-text-muted">
             Estimate your staking rewards
           </p>
@@ -56,15 +54,15 @@ export function StakingCalculator({ stats, qbondApy, qearnApy }: Props) {
           type="text"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg bg-bg-elevated border border-bg-hover text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-qubic-cyan/50 text-sm font-mono"
+          className="min-h-11 w-full rounded-xl border border-bg-hover bg-bg-elevated px-3 font-mono text-sm text-text-primary placeholder:text-text-disabled focus:border-qubic-cyan/50"
           placeholder="Enter amount..."
         />
-        <div className="flex gap-2 mt-2">
+        <div className="mt-2 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
           {[100000000, 1000000000, 10000000000, 100000000000].map((val) => (
             <button
               key={val}
               onClick={() => setAmount(val.toString())}
-              className="px-2 py-1 text-xs rounded bg-bg-elevated border border-bg-hover text-text-muted hover:text-text-primary hover:border-qubic-cyan/30 transition-colors"
+              className="min-h-9 rounded-lg border border-bg-hover bg-bg-elevated px-2 text-xs text-text-muted transition-colors hover:border-qubic-cyan/30 hover:text-text-primary"
             >
               {formatBalance(val)}
             </button>
@@ -121,6 +119,6 @@ export function StakingCalculator({ stats, qbondApy, qearnApy }: Props) {
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }

@@ -46,8 +46,10 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-white/5 bg-bg-deep/80 backdrop-blur-xl">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 group">
-            <img src="/logo.svg" alt="QubicPulse" className="h-8 w-8" />
+          <Link to="/" className="group flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-qubic-cyan/8 ring-1 ring-qubic-cyan/15 transition-colors group-hover:bg-qubic-cyan/12">
+              <img src="/logo.svg" alt="" className="h-7 w-7" />
+            </span>
             <span className="font-heading text-lg font-semibold text-text-primary">
               {APP_NAME}
             </span>
@@ -80,8 +82,10 @@ export function Navbar() {
           <div className="flex md:hidden items-center gap-2">
             <ThemeToggle />
             <button
-              className="p-2 text-text-muted hover:text-text-primary"
+              className="flex h-11 w-11 items-center justify-center rounded-xl text-text-muted hover:bg-bg-elevated hover:text-text-primary"
               onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
+              aria-expanded={mobileOpen}
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -91,7 +95,7 @@ export function Navbar() {
 
       {mobileOpen && (
         <div className="md:hidden border-t border-bg-hover bg-bg-surface">
-          <nav className="px-4 py-2 space-y-1">
+          <nav className="space-y-1 px-4 py-3" aria-label="Mobile navigation">
             {NAV_ITEMS.map((item) => {
               const active = location.pathname === item.path;
               return (

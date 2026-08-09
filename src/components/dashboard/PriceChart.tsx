@@ -48,11 +48,10 @@ export function PriceChart({ onPeriodChange }: Props) {
 
   return (
     <div className="chart-container">
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h3 className="font-heading font-semibold text-text-primary text-lg">
-            Price Chart
-          </h3>
+          <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-qubic-cyan">Market pulse</div>
+          <h2 className="font-heading text-xl font-semibold text-text-primary">QUBIC price movement</h2>
           {data.length > 0 && (
             <div className="flex gap-4 mt-1">
               <span className="text-xs text-success font-medium">
@@ -64,12 +63,12 @@ export function PriceChart({ onPeriodChange }: Props) {
             </div>
           )}
         </div>
-        <div className="flex gap-1 bg-bg-elevated/50 rounded-lg p-1">
+        <div className="flex self-start rounded-xl border border-white/5 bg-bg-elevated/50 p-1">
           {PERIODS.map((p) => (
             <button
               key={p.days}
               onClick={() => handlePeriodChange(p.days)}
-              className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
+              className={`min-h-8 rounded-lg px-3 py-1 text-xs font-medium transition-all ${
                 activePeriod === p.days
                   ? "bg-qubic-cyan text-bg-deep shadow-sm"
                   : "text-text-muted hover:text-text-primary"
@@ -80,7 +79,7 @@ export function PriceChart({ onPeriodChange }: Props) {
           ))}
         </div>
       </div>
-      <div className="h-64">
+      <div className="h-64 sm:h-72">
         {loading && data.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <Loader2 className="w-6 h-6 text-qubic-cyan animate-spin" />

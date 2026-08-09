@@ -19,6 +19,7 @@ export function WalletCard({ wallet }: Props) {
   const price = usePriceStore((s) => s.price);
   const [copied, setCopied] = useState(false);
   const [showTx, setShowTx] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
 
   const bal = balances.get(wallet.address);
   const balance = bal?.balance ?? 0;
@@ -31,22 +32,23 @@ export function WalletCard({ wallet }: Props) {
   };
 
   return (
-    <div className="glass-card overflow-hidden">
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-qubic-cyan/10 flex items-center justify-center">
-              <Wallet className="w-4 h-4 text-qubic-cyan" />
+    <article className="data-surface overflow-hidden">
+      <div className="p-4 sm:p-5">
+        <div className="mb-5 flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-qubic-cyan/10 ring-1 ring-qubic-cyan/15">
+              <Wallet className="h-4 w-4 text-qubic-cyan" />
             </div>
-            <div>
-              <div className="text-sm font-medium text-text-primary">
+            <div className="min-w-0">
+              <div className="truncate font-heading text-base font-semibold text-text-primary">
                 {wallet.label}
               </div>
-              <div className="flex items-center gap-1 text-xs text-text-muted font-mono">
+              <div className="mt-1 flex items-center gap-1.5 font-mono text-[11px] text-text-muted">
                 {formatAddress(wallet.address, 10)}
                 <button
                   onClick={handleCopy}
-                  className="text-text-disabled hover:text-qubic-cyan transition-colors"
+                  className="flex h-7 w-7 items-center justify-center rounded-lg text-text-disabled transition-colors hover:bg-qubic-cyan/10 hover:text-qubic-cyan"
+                  aria-label={copied ? "Address copied" : `Copy ${wallet.label} address`}
                 >
                   {copied ? (
                     <Check className="w-3 h-3 text-success" />
@@ -57,43 +59,54 @@ export function WalletCard({ wallet }: Props) {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-start gap-2">
             <div className="text-right">
-              <div className="text-sm font-semibold text-text-primary">
+              <div className="font-heading text-lg font-semibold text-text-primary sm:text-xl">
                 {formatBalance(balance)} Q
               </div>
-              <div className="text-xs text-qubic-gold">
+              <div className="mt-0.5 text-xs font-medium text-qubic-gold">
                 {formatCurrency(value)}
               </div>
             </div>
             <button
-              onClick={() => removeWallet(wallet.id)}
-              className="p-1.5 rounded-lg text-text-disabled hover:text-danger hover:bg-danger/10 hover:shadow-[0_0_10px_rgba(239,68,68,0.2)] transition-all duration-200"
+              onClick={() => setConfirmRemove(true)}
+              className="flex h-9 w-9 items-center justify-center rounded-xl text-text-disabled transition-colors hover:bg-danger/10 hover:text-danger"
+              aria-label={`Remove ${wallet.label}`}
             >
-              <Trash2 className="w-3.5 h-3.5" />
+              <Trash2 className="h-4 w-4" />
             </button>
           </div>
         </div>
 
         {bal && (
-          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-bg-hover">
-            <div>
-              <div className="text-[10px] text-text-muted">Incoming</div>
-              <div className="text-xs font-medium text-success">
+          <div className="grid grid-cols-3 gap-2 border-t border-white/5 pt-4">
+            <div className="rounded-xl bg-bg-deep/25 p-3">
+              <div className="text-[10px] uppercase tracking-[0.1em] text-text-muted">Incoming</div>
+              <div className="mt-1 truncate text-xs font-semibold text-success sm:text-sm">
                 +{formatBalance(bal.incomingAmount)}
               </div>
             </div>
-            <div>
-              <div className="text-[10px] text-text-muted">Outgoing</div>
-              <div className="text-xs font-medium text-danger">
+            <div className="rounded-xl bg-bg-deep/25 p-3">
+              <div className="text-[10px] uppercase tracking-[0.1em] text-text-muted">Outgoing</div>
+              <div className="mt-1 truncate text-xs font-semibold text-danger sm:text-sm">
                 -{formatBalance(bal.outgoingAmount)}
               </div>
             </div>
-            <div>
-              <div className="text-[10px] text-text-muted">Transfers</div>
-              <div className="text-xs font-medium text-text-primary">
+            <div className="rounded-xl bg-bg-deep/25 p-3">
+              <div className="text-[10px] uppercase tracking-[0.1em] text-text-muted">Transfers</div>
+              <div className="mt-1 text-xs font-semibold text-text-primary sm:text-sm">
                 {bal.numberOfTransfers}
               </div>
+            </div>
+          </div>
+        )}
+
+        {confirmRemove && (
+          <div role="alertdialog" aria-label={`Remove ${wallet.label}`} className="mt-4 flex flex-col gap-3 rounded-xl border border-danger/20 bg-danger/5 p-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs text-text-secondary">Remove this address from QubicPulse?</p>
+            <div className="flex gap-2">
+              <button onClick={() => setConfirmRemove(false)} className="min-h-9 rounded-lg px-3 text-xs font-medium text-text-muted hover:bg-bg-elevated hover:text-text-primary">Cancel</button>
+              <button onClick={() => removeWallet(wallet.id)} className="min-h-9 rounded-lg bg-danger/15 px-3 text-xs font-semibold text-danger hover:bg-danger/25">Remove</button>
             </div>
           </div>
         )}
@@ -101,7 +114,8 @@ export function WalletCard({ wallet }: Props) {
 
       <button
         onClick={() => setShowTx(!showTx)}
-        className="w-full px-4 py-2 border-t border-bg-hover text-xs text-text-muted hover:text-qubic-cyan hover:bg-qubic-cyan/5 transition-colors flex items-center justify-center gap-1"
+        className="flex min-h-11 w-full items-center justify-center gap-1 border-t border-white/5 px-4 py-2 text-xs font-medium text-text-muted transition-colors hover:bg-qubic-cyan/5 hover:text-qubic-cyan"
+        aria-expanded={showTx}
       >
         {showTx ? (
           <>
@@ -119,6 +133,6 @@ export function WalletCard({ wallet }: Props) {
           <TransactionHistory address={wallet.address} />
         </div>
       )}
-    </div>
+    </article>
   );
 }
