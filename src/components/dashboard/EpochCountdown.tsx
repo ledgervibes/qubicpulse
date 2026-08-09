@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Activity, Clock, Layers } from "lucide-react";
+import { Activity, Clock } from "lucide-react";
 import { getTickInfo } from "../../services/qubic-rpc";
 import type { TickInfo } from "../../types";
 import {
@@ -70,13 +70,10 @@ export function EpochCountdown() {
   if (!countdown) return null;
 
   return (
-    <section className="hero-surface p-5 sm:p-7" aria-label="Qubic network epoch status">
-      <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full border border-qubic-cyan/10" />
-      <div className="pointer-events-none absolute -right-8 -top-12 h-44 w-44 rounded-full border border-qubic-cyan/10" />
-
-      <div className="relative grid gap-6 lg:grid-cols-[0.9fr_1.35fr_0.75fr] lg:items-center">
+    <section className="data-surface p-4 sm:p-5" aria-label="Qubic network epoch status">
+      <div className="grid gap-4 sm:grid-cols-[auto_1fr_auto] sm:items-center">
         <div>
-          <div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-qubic-cyan">
+          <div className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-qubic-cyan">
             <span className="relative flex h-2 w-2">
               <span className="absolute h-full w-full animate-ping rounded-full bg-success opacity-60" />
               <span className="relative h-2 w-2 rounded-full bg-success" />
@@ -84,10 +81,10 @@ export function EpochCountdown() {
             Network live
           </div>
           <div className="flex items-end gap-3">
-            <span className="font-heading text-4xl font-semibold tracking-tight text-text-primary sm:text-5xl">
+            <span className="font-heading text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">
               {countdown.currentEpoch}
             </span>
-            <span className="mb-1.5 text-sm text-text-muted">current epoch</span>
+            <span className="mb-1 text-xs text-text-muted">current epoch</span>
           </div>
         </div>
 
@@ -108,17 +105,16 @@ export function EpochCountdown() {
             />
           </div>
           <div className="mt-3 flex items-center gap-2 text-xs text-text-muted">
-            <Layers className="h-3.5 w-3.5 text-qubic-gold" />
-            Epoch {countdown.currentEpoch + 1} begins after the countdown
+            Next epoch begins after the countdown
           </div>
         </div>
 
-        <div className="border-t border-white/5 pt-5 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0">
+        <div className="border-t border-white/5 pt-4 sm:border-l sm:border-t-0 sm:pl-5 sm:pt-0">
           <div className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.14em] text-text-muted">
             <Clock className="h-3.5 w-3.5 text-qubic-gold" />
             Next epoch in
           </div>
-          <div className="whitespace-nowrap font-mono text-xl font-medium text-text-primary sm:text-2xl">
+          <div className="whitespace-nowrap font-mono text-lg font-medium text-text-primary sm:text-xl">
             {formatEpochCountdown(countdown)}
           </div>
         </div>

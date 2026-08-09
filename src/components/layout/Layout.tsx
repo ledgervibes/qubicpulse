@@ -1,6 +1,5 @@
 import { Outlet } from "react-router-dom";
 import { Navbar } from "./Navbar";
-import { StatusBar } from "./StatusBar";
 import { NotificationToast } from "../ui/NotificationToast";
 import { useInitData } from "../../hooks/useInitData";
 import { useWalletMonitor } from "../../hooks/useWalletMonitor";
@@ -17,9 +16,8 @@ export function Layout() {
   }, [initTheme]);
 
   return (
-    <div className="min-h-screen bg-bg-deep">
+      <div className="min-h-screen bg-bg-deep">
       <Navbar />
-      <StatusBar />
       <NotificationToast />
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 animate-fade-in">
         <Outlet />

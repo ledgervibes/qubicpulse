@@ -47,7 +47,7 @@ export function PriceChart({ onPeriodChange }: Props) {
   const maxPrice = data.length > 0 ? Math.max(...data.map((d) => d.price)) : 0;
 
   return (
-    <div className="chart-container">
+    <section className="chart-container min-w-0" aria-label="QUBIC price chart">
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-qubic-cyan">Market pulse</div>
@@ -145,6 +145,6 @@ export function PriceChart({ onPeriodChange }: Props) {
           </ResponsiveContainer>
         )}
       </div>
-    </div>
+    </section>
   );
 }
