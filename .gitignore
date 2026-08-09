@@ -27,6 +27,9 @@ dist-ssr
 .playwright-mcp/
 AGENTS.md
 
+# Wrangler local state
+.wrangler/
+
 # Environment files
 .env
 .env.*

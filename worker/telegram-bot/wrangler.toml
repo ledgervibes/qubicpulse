@@ -1,0 +1,14 @@
+name = "qubicpulse-bot"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[vars]
+QUBIC_RPC_URL = "https://rpc.qubic.org"
+QUBIC_QUERY_RPC_URL = "https://rpc.qubic.org/query/v1"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "06a2d49493b745fcac4ef6c0de6f8487"
+
+[triggers]
+crons = ["*/5 * * * *", "0 7 * * *", "0 7 * * 1"]
