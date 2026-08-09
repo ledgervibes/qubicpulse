@@ -1,94 +1,162 @@
-# QubicPulse — Roadmap
+# QubicPulse Roadmap
 
-> Building the all-in-one dashboard for the Qubic ecosystem.
+> A watch-only command center for the Qubic ecosystem.
 
----
+## Product Status
 
-## v1.0 — Core Platform ✅
+QubicPulse has shipped its core dashboard, multi-address portfolio monitoring,
+price and wallet alerts, QX activity intelligence, QEarn/QBond comparison, and
+the first product quality pass. The next product milestone is Token Explorer,
+which moves QubicPulse from account monitoring into broader Qubic asset
+discovery.
 
-### Phase 1 — Core MVP ✅
-- Dashboard with live QUBIC price, market data, and price charts
-- Multi-wallet portfolio tracking with balance and transaction history
-- Price alerts with browser notifications
-- DeFi dashboard with market overview and network stats
-- Multi-API price system (CoinGecko, CoinPaprika, CoinMarketCap)
-- Cloudflare Pages deployment
+| Release | Milestone | Status |
+| --- | --- | --- |
+| v1.0 | Core Platform | Shipped |
+| v1.5 | Product Experience | Shipped |
+| v2.0 | Staking & Rewards | Shipped |
+| v2.1 | Product Quality Pass | Shipped |
+| v2.5 | Token Explorer | Next |
+| v3.0 | Wallet Identity | Planned |
+| v3.5 | Portfolio Analytics | Planned |
+| v4.0 | Automation & AI | Planned |
 
-### Phase 2 — Telegram Bot & Smart Alerts ✅
-- Telegram bot (@qubic_pulse_bot) with wallet management
-- Real-time transaction notifications (QUBIC + multi-token)
-- Price alerts with browser + Telegram delivery
-- Multi-token portfolio support via Qubic Event Logs API
-- Compact portfolio layout with token holdings
+**Current position:** v2.1 shipped; v2.5 is next.
 
-### Phase 3 — DeFi Intelligence ✅
-- QX contract integration for asset data
-- Top Assets on QX DEX table
-- Advanced DeFi analytics (volume trends, market data)
-- Portfolio multi-token support
+## Shipped Milestones
 
----
+### v1.0 - Core Platform
 
-## v1.5 — UI Polish ✅
+Goal: consolidate essential Qubic monitoring workflows into one interface.
 
-### Phase 4 — Polish & Growth ✅
-- Light mode theme with dark/light toggle
-- Mobile-first responsive optimization
-- Comprehensive test coverage (Vitest)
-- Premium UI with glassmorphism design
+- Dashboard with live QUBIC market data and price history
+- Multi-address watch-only portfolio with QU balances and transaction history
+- Browser-based price alerts
+- Qubic network context, including current epoch and tick
+- Public price-source fallback across CoinGecko, CoinPaprika, and an optional
+  server-side CoinMarketCap proxy
+- Cloudflare Pages production deployment
 
----
+### v1.5 - Product Experience
 
-## v2.0 — Staking & Rewards ✅
+Goal: make the platform practical across desktop and mobile without requiring a
+wallet connection.
 
-- [x] Staking Comparator (QEarn vs QBond side-by-side)
-- [x] Epoch Reward Calculator (estimated rewards per wallet)
-- [x] Epoch Countdown widget (dashboard)
-- [x] Reward notifications via Telegram (QEarn rewards)
+- Dark and light themes
+- Responsive navigation and mobile layouts
+- Multi-token holdings from Qubic Event Logs
+- Telegram companion bot for wallet, transaction, price, and QEarn monitoring
+- Loading, empty, error, and watch-only privacy states
+- Automated lint, test, and production build validation
 
-> QBond maturity-based reward notifications require a verified contract/API data source and are planned as a future enhancement.
+### v2.0 - Staking & Rewards
 
----
+Goal: help users understand Qubic earning options before leaving QubicPulse to
+use the underlying products.
 
-## v2.5 — Token Explorer ⏳
+- QEarn and QBond side-by-side comparison
+- Reward estimator using currently reported annualized rates
+- Epoch countdown and Network Pulse on the dashboard
+- QEarn reward notifications through the Telegram bot
+- Responsive comparison rows with clear lock, liquidity, fee, and exit tradeoffs
 
-- Token listing page (all QX assets)
-- Token detail page (price, holders, supply, chart)
-- Trending tokens & new assets
-- Asset Watchlist (bookmark favorite tokens)
+QBond maturity notifications remain deferred until a verified contract or API
+source can support reliable user-facing delivery.
 
----
+### v2.1 - Product Quality Pass
 
-## v3.0 — Wallet Identity ⏳
+Goal: improve correctness, trust, usability, and loading performance across the
+shipped product.
 
-- Shareable wallet profile page (/address/XXXX)
-- On-chain CV (wallet age, transactions, staking history, badges)
-- Wallet reputation & achievements
-- Share to X feature (generate image + pre-filled tweet)
+- Qubic-specific Network Pulse and refined primary navigation
+- DeFi Market Intelligence with transparent QX activity sampling
+- Alerts Command Center with reactive notification state and activity history
+- Staking calculator correctness and decision-support hierarchy
+- Portfolio refresh status, partial RPC failure handling, and asset retry states
+- Accessible labels, visible status text, keyboard focus states, and reduced
+  motion support
+- Route-level code splitting; initial JavaScript reduced from approximately
+  706 kB to 245 kB in the production build
 
----
+## Next Milestone
 
-## v3.5 — Portfolio Analytics ⏳
+### v2.5 - Token Explorer
 
-- Allocation % (pie chart)
-- Top Gainer / Top Loser
-- Profit / Loss tracking
-- Historical Value chart
-- Net Worth Chart
-- Diversification Score
+Goal: provide a searchable, transparent view of assets issued and active on
+Qubic without inventing unavailable market data.
 
----
+#### v2.5A - Asset Discovery
 
-## v4.0 — Automation & AI ⏳
+- Searchable QX asset listing
+- Sorting and filtering by verified available fields
+- Asset name and issuer identity
+- Issuance supply when available from validated issuance events
+- Recent transfer activity
+- Recently discovered assets
 
-- Whale Tracker (large TX monitoring via Event API)
-- Asset Watchlist alerts
-- AI Insight (portfolio risk analysis & recommendations)
-- Automated portfolio insights
+#### v2.5B - Asset Detail
 
----
+- Shareable asset detail route
+- Issuer and verified issuance information
+- Recent transfer activity and network context
+- Supply, holder count, price, and historical charts only where a reliable data
+  source exists
+- Clear unavailable and stale-data states
 
-**Live**: [qubicpulse.pages.dev](https://qubicpulse.pages.dev)  
-**GitHub**: [github.com/ledgervibes/qubicpulse](https://github.com/ledgervibes/qubicpulse)
-**Telegram**: [@qubic_pulse_bot](https://t.me/qubic_pulse_bot)
-**Last updated**: 2026-08-01
+#### v2.5C - Local Watchlist
+
+- Bookmark favorite assets without an account
+- Browser-local persistence
+- Watchlist filtering within Token Explorer
+
+Asset alert delivery is not part of v2.5. It remains planned for the later
+automation milestone because it requires additional monitoring and delivery
+infrastructure.
+
+## Future Milestones
+
+### v3.0 - Wallet Identity
+
+- Shareable watch-only address profile (`/address/:identity`)
+- On-chain activity summary based on verifiable data
+- Wallet age, transaction, and staking context where supported
+- Shareable profile image and pre-filled social post
+- Reputation or achievements only after objective scoring criteria are defined
+
+### v3.5 - Portfolio Analytics
+
+- Asset allocation
+- Historical portfolio value
+- Net worth chart
+- Profit and loss tracking where acquisition-cost data is available
+- Top mover summaries
+- Diversification context with a documented methodology
+
+### v4.0 - Automation & AI
+
+- Large-transaction monitoring using Qubic Event Logs
+- Asset watchlist alerts
+- Automated portfolio summaries
+- Explainable risk signals based on documented inputs
+- AI-assisted insights that distinguish facts, estimates, and recommendations
+
+## Delivery Principles
+
+- **Qubic-native:** use epoch, tick, identity, and contract conventions rather
+  than applying EVM assumptions.
+- **Watch-only by default:** QubicPulse never requests a seed phrase or private
+  key.
+- **Evidence before claims:** user-facing metrics must map to a verified source;
+  unavailable data is labeled rather than estimated silently.
+- **Free infrastructure first:** public Qubic services and free hosting/API tiers
+  remain the default, with their rate and availability limits documented.
+- **Testable delivery:** a milestone is shipped only when its user-facing flow,
+  failure states, validation, and production deployment are complete.
+
+## Links
+
+- **Live product:** [qubicpulse.pages.dev](https://qubicpulse.pages.dev)
+- **Source code:** [github.com/ledgervibes/qubicpulse](https://github.com/ledgervibes/qubicpulse)
+- **Telegram bot:** [@qubic_pulse_bot](https://t.me/qubic_pulse_bot)
+
+**Last updated:** 2026-08-10
