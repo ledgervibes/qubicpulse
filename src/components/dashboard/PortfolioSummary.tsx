@@ -40,7 +40,7 @@ export function PortfolioSummary() {
           <p className="mx-auto mt-2 max-w-64 text-xs leading-5 text-text-muted">Add a public address to track balances and portfolio value.</p>
           <Link
             to="/portfolio"
-            className="btn-gradient mt-5"
+            className="btn-primary mt-5"
           >
             Add first wallet
           </Link>

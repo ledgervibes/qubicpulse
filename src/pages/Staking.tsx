@@ -56,7 +56,7 @@ export function Staking() {
             href="https://qearn.org"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-glass min-h-11 px-3 text-sm"
+            className="btn-secondary min-h-11 px-3 text-sm"
           >
             QEarn
             <ExternalLink className="w-3.5 h-3.5" />
@@ -65,7 +65,7 @@ export function Staking() {
             href="https://qbond.org"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-glass min-h-11 px-3 text-sm"
+            className="btn-secondary min-h-11 px-3 text-sm"
           >
             QBond
             <ExternalLink className="w-3.5 h-3.5" />

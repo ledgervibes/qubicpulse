@@ -122,10 +122,10 @@ export function Alerts() {
       <div className="flex w-full gap-1 rounded-xl border border-white/5 bg-bg-elevated/50 p-1 sm:w-fit">
         <button
           onClick={() => setActiveTab("price")}
-            className={`min-h-10 flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all sm:flex-none ${
+            className={`flex min-h-10 flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors sm:flex-none ${
             activeTab === "price"
-              ? "bg-qubic-cyan text-bg-deep shadow-sm"
-              : "text-text-muted hover:text-text-primary"
+              ? "bg-bg-surface text-text-primary ring-1 ring-bg-hover"
+              : "text-text-muted hover:bg-bg-surface/60 hover:text-text-primary"
           }`}
         >
           <Bell className="w-4 h-4" />
@@ -133,10 +133,10 @@ export function Alerts() {
         </button>
         <button
           onClick={() => setActiveTab("wallet")}
-            className={`min-h-10 flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all sm:flex-none ${
+            className={`flex min-h-10 flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors sm:flex-none ${
             activeTab === "wallet"
-              ? "bg-qubic-cyan text-bg-deep shadow-sm"
-              : "text-text-muted hover:text-text-primary"
+              ? "bg-bg-surface text-text-primary ring-1 ring-bg-hover"
+              : "text-text-muted hover:bg-bg-surface/60 hover:text-text-primary"
           }`}
         >
           <Wallet className="w-4 h-4" />
@@ -160,7 +160,7 @@ export function Alerts() {
             </div>
             <button
               onClick={() => setShowAdd(!showAdd)}
-              className="btn-gradient"
+              className="btn-primary"
             >
               <Plus className="w-4 h-4" />
               New Alert
@@ -182,7 +182,7 @@ export function Alerts() {
               </div>
               <button
                 onClick={handleEnableNotif}
-                className="btn-gradient"
+                className="btn-secondary"
               >
                 Enable
               </button>
@@ -190,7 +190,7 @@ export function Alerts() {
           )}
 
           {price && (
-             <div className="hero-surface p-5 sm:p-6">
+             <div className="data-surface p-5 sm:p-6">
               <div className="text-sm text-text-muted">Current Price</div>
               <div className="text-2xl font-heading font-bold text-text-primary">
                 {formatCurrency(price.usd)}
@@ -212,8 +212,8 @@ export function Alerts() {
                       onClick={() => setAlertType(type.id)}
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                         alertType === type.id
-                          ? "bg-qubic-cyan/20 text-qubic-cyan border border-qubic-cyan/30"
-                          : "bg-bg-elevated text-text-muted border border-bg-hover hover:border-qubic-cyan/20"
+                          ? "border border-qubic-cyan/40 bg-qubic-cyan/8 text-qubic-cyan"
+                          : "border border-bg-hover bg-bg-surface text-text-muted hover:border-text-disabled hover:text-text-primary"
                       }`}
                     >
                       <Icon className="w-3 h-3" />
@@ -231,7 +231,7 @@ export function Alerts() {
                   step="0.0000001"
                    className="min-h-11 flex-1 rounded-xl border border-bg-hover bg-bg-elevated px-3 text-sm text-text-primary placeholder:text-text-disabled focus:border-qubic-cyan/50"
                 />
-                <button onClick={handleAdd} disabled={!targetPrice} className="btn-gradient disabled:cursor-not-allowed disabled:opacity-50">
+                <button onClick={handleAdd} disabled={!targetPrice} className="btn-primary">
                   Create
                 </button>
               </div>
@@ -263,10 +263,10 @@ export function Alerts() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button onClick={() => toggleAlert(alert.id)} className={`px-3 py-1 rounded-md text-xs font-medium ${alert.active ? "bg-success/10 text-success" : "bg-bg-elevated text-text-muted"}`}>
+                       <button onClick={() => toggleAlert(alert.id)} className={`min-h-8 rounded-lg border px-3 text-xs font-medium transition-colors ${alert.active ? "border-success/20 bg-success/5 text-success" : "border-bg-hover bg-bg-surface text-text-muted"}`}>
                         {alert.active ? "Active" : "Paused"}
                       </button>
-                      <button onClick={() => removeAlert(alert.id)} className="p-2 rounded-lg text-text-disabled hover:text-danger hover:bg-danger/10 transition-all">
+                       <button onClick={() => removeAlert(alert.id)} className="flex h-9 w-9 items-center justify-center rounded-lg text-text-disabled transition-colors hover:bg-danger/10 hover:text-danger" aria-label="Delete alert">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -288,7 +288,7 @@ export function Alerts() {
             {notifications.length > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="btn-glass text-xs"
+                className="btn-tertiary text-xs"
               >
                 <CheckCheck className="w-3 h-3" />
                 Mark all read

@@ -137,7 +137,7 @@ export function Defi() {
           {topAssets.length > 10 && (
             <button 
               onClick={() => setShowAllAssets(!showAllAssets)}
-              className="text-xs text-qubic-cyan hover:text-qubic-cyan-light transition-colors font-medium"
+              className="btn-tertiary min-h-0"
             >
               {showAllAssets ? "Show Less ←" : "View All →"}
             </button>
@@ -280,7 +280,7 @@ export function Defi() {
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between p-3 rounded-lg hover:bg-bg-elevated/50 transition-colors group"
+                className="group flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-bg-elevated/50"
               >
                 <div>
                   <div className="text-sm font-medium text-text-primary group-hover:text-qubic-cyan transition-colors">

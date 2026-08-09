@@ -66,7 +66,7 @@ export function Portfolio() {
           <button
             onClick={() => refreshBalances()}
             disabled={loading}
-            className="btn-glass min-h-11 px-3 sm:px-4"
+            className="btn-secondary min-h-11 px-3 sm:px-4"
           >
             <RefreshCw
               className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
@@ -75,7 +75,7 @@ export function Portfolio() {
           </button>
           <button
             onClick={() => setShowAdd(!showAdd)}
-            className="btn-gradient min-h-11"
+            className="btn-primary min-h-11"
             aria-expanded={showAdd}
           >
             <Plus className="w-4 h-4" />
@@ -133,13 +133,13 @@ export function Portfolio() {
           <div className="flex gap-2 mt-4">
             <button
               onClick={handleAdd}
-              className="btn-gradient min-h-11"
+              className="btn-primary min-h-11"
             >
               Add Wallet
             </button>
             <button
               onClick={() => setShowAdd(false)}
-              className="btn-glass min-h-11"
+              className="btn-secondary min-h-11"
             >
               Cancel
             </button>
@@ -196,7 +196,7 @@ export function Portfolio() {
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-text-muted">Add a public address to see its QU balance, assets, and recent network activity. No wallet connection required.</p>
             <button
               onClick={() => setShowAdd(true)}
-              className="btn-gradient mt-6 min-h-11"
+              className="btn-primary mt-6 min-h-11"
             >
               <Plus className="h-4 w-4" />
               Add first address

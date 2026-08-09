@@ -224,29 +224,36 @@
     background: color-mix(in srgb, var(--bg-elevated) 62%, transparent);
   }
 
-  /* Gradient Button */
-  .btn-gradient {
-    background: linear-gradient(135deg, #25CAD9 0%, #1A8F99 100%);
-    color: #0A0E14;
-    border: none;
-    border-radius: 12px;
-    padding: 10px 20px;
-    font-weight: 600;
-    font-size: 14px;
+  .btn-primary {
+    background: var(--color-qubic-cyan);
+    color: var(--bg-deep);
+    border: 1px solid var(--color-qubic-cyan);
+    border-radius: 10px;
+    min-height: 40px;
+    padding: 9px 16px;
+    font-weight: 650;
+    font-size: 13px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
     display: inline-flex;
     align-items: center;
     gap: 8px;
   }
 
-  .btn-gradient:hover {
-    box-shadow: 0 4px 16px rgba(37, 202, 217, 0.3);
+  .btn-primary:hover {
+    background: var(--color-qubic-cyan-light);
+    border-color: var(--color-qubic-cyan-light);
     transform: translateY(-1px);
   }
 
-  .btn-gradient:active {
+  .btn-primary:active {
     transform: translateY(0) scale(0.98);
+  }
+
+  .btn-primary:disabled, .btn-secondary:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    transform: none;
   }
 
   /* Secondary Button */
@@ -264,6 +271,60 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
+  }
+
+  .btn-secondary {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-hover);
+    border-radius: 10px;
+    min-height: 40px;
+    padding: 9px 16px;
+    font-weight: 550;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-secondary:hover {
+    background: var(--bg-elevated);
+    border-color: var(--text-disabled);
+    color: var(--text-primary);
+  }
+
+  .btn-tertiary {
+    display: inline-flex;
+    min-height: 36px;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 550;
+    transition: color 0.18s ease;
+  }
+
+  .btn-tertiary:hover {
+    color: var(--color-qubic-cyan);
+  }
+
+  .btn-danger {
+    background: transparent;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 9px;
+    min-height: 36px;
+    padding: 7px 12px;
+    color: var(--color-danger);
+    font-size: 12px;
+    font-weight: 600;
+    transition: background-color 0.18s ease, border-color 0.18s ease;
+  }
+
+  .btn-danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.5);
   }
 
   .btn-glass:hover {

@@ -105,8 +105,8 @@ export function WalletCard({ wallet }: Props) {
           <div role="alertdialog" aria-label={`Remove ${wallet.label}`} className="mt-4 flex flex-col gap-3 rounded-xl border border-danger/20 bg-danger/5 p-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-text-secondary">Remove this address from QubicPulse?</p>
             <div className="flex gap-2">
-              <button onClick={() => setConfirmRemove(false)} className="min-h-9 rounded-lg px-3 text-xs font-medium text-text-muted hover:bg-bg-elevated hover:text-text-primary">Cancel</button>
-              <button onClick={() => removeWallet(wallet.id)} className="min-h-9 rounded-lg bg-danger/15 px-3 text-xs font-semibold text-danger hover:bg-danger/25">Remove</button>
+              <button onClick={() => setConfirmRemove(false)} className="btn-tertiary px-3">Cancel</button>
+              <button onClick={() => removeWallet(wallet.id)} className="btn-danger">Remove</button>
             </div>
           </div>
         )}
@@ -114,7 +114,7 @@ export function WalletCard({ wallet }: Props) {
 
       <button
         onClick={() => setShowTx(!showTx)}
-        className="flex min-h-11 w-full items-center justify-center gap-1 border-t border-white/5 px-4 py-2 text-xs font-medium text-text-muted transition-colors hover:bg-qubic-cyan/5 hover:text-qubic-cyan"
+        className="flex min-h-11 w-full items-center justify-center gap-1 border-t border-white/5 px-4 py-2 text-xs font-medium text-text-muted transition-colors hover:bg-bg-elevated/60 hover:text-text-primary"
         aria-expanded={showTx}
       >
         {showTx ? (
