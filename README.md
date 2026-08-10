@@ -12,8 +12,8 @@ does not connect to a wallet and never requests a seed phrase or private key.
 
 ## Current Status
 
-The core platform, product experience, staking tools, and initial quality pass
-are shipped. The next milestone is **v2.5 Token Explorer**.
+The core platform, product experience, staking tools, quality pass, and the
+Token Explorer are shipped. The next milestone is **v3.0 Wallet Identity**.
 
 | Area | Status |
 | --- | --- |
@@ -22,7 +22,8 @@ are shipped. The next milestone is **v2.5 Token Explorer**.
 | Price and wallet alerts | Shipped |
 | DeFi Market Intelligence | Shipped |
 | QEarn and QBond comparison | Shipped |
-| Token Explorer | Next |
+| Token Explorer | Shipped |
+| Wallet Identity | Next |
 
 ## Features
 
@@ -33,6 +34,9 @@ are shipped. The next milestone is **v2.5 Token Explorer**.
   activity
 - **DeFi Intelligence:** QUBIC market context, reported volume history, and a
   transparent ranking from a recent sample of QX asset-transfer events
+- **Token Explorer:** searchable listing of assets issued through QX, asset
+  detail routes with verified issuance data and recent transfers, and a
+  browser-local watchlist
 - **Staking:** QEarn/QBond terms, lock and liquidity tradeoffs, and a reward
   estimator based on currently reported annualized rates
 - **Telegram Companion:** `@qubic_pulse_bot` for wallet, transaction, price, and

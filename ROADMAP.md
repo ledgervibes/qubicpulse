@@ -5,10 +5,9 @@
 ## Product Status
 
 QubicPulse has shipped its core dashboard, multi-address portfolio monitoring,
-price and wallet alerts, QX activity intelligence, QEarn/QBond comparison, and
-the first product quality pass. The next product milestone is Token Explorer,
-which moves QubicPulse from account monitoring into broader Qubic asset
-discovery.
+price and wallet alerts, QX activity intelligence, QEarn/QBond comparison, the
+first product quality pass, and the Token Explorer. The next product milestone
+is Wallet Identity, which turns any public address into a shareable profile.
 
 | Release | Milestone | Status |
 | --- | --- | --- |
@@ -16,12 +15,12 @@ discovery.
 | v1.5 | Product Experience | Shipped |
 | v2.0 | Staking & Rewards | Shipped |
 | v2.1 | Product Quality Pass | Shipped |
-| v2.5 | Token Explorer | Next |
-| v3.0 | Wallet Identity | Planned |
+| v2.5 | Token Explorer | Shipped |
+| v3.0 | Wallet Identity | Next |
 | v3.5 | Portfolio Analytics | Planned |
 | v4.0 | Automation & AI | Planned |
 
-**Current position:** v2.1 shipped; v2.5 is next.
+**Current position:** v2.5 shipped; v3.0 is next.
 
 ## Shipped Milestones
 
@@ -78,36 +77,24 @@ shipped product.
 - Route-level code splitting; initial JavaScript reduced from approximately
   706 kB to 245 kB in the production build
 
-## Next Milestone
-
 ### v2.5 - Token Explorer
 
 Goal: provide a searchable, transparent view of assets issued and active on
 Qubic without inventing unavailable market data.
 
-#### v2.5A - Asset Discovery
-
-- Searchable QX asset listing
-- Sorting and filtering by verified available fields
-- Asset name and issuer identity
-- Issuance supply when available from validated issuance events
-- Recent transfer activity
+- Searchable listing of assets issued through the QX managing contract, with
+  asset name and issuer identity
+- Sorting by name, issuance recency, and recent transfer activity sampled from
+  Qubic Event Logs
+- Issued supply and decimals read from validated issuance events
 - Recently discovered assets
-
-#### v2.5B - Asset Detail
-
-- Shareable asset detail route
-- Issuer and verified issuance information
-- Recent transfer activity and network context
-- Supply, holder count, price, and historical charts only where a reliable data
-  source exists
-- Clear unavailable and stale-data states
-
-#### v2.5C - Local Watchlist
-
-- Bookmark favorite assets without an account
-- Browser-local persistence
-- Watchlist filtering within Token Explorer
+- Shareable asset detail routes (`/tokens/:name`) with the issuance record,
+  first-seen context, and recent transfer activity linked to the explorer
+- Explicit unavailable states for price, holder counts, and historical charts
+  where no reliable verified source exists
+- Browser-local asset watchlist with a watchlist-only filter and per-asset
+  toggles on both listing and detail views
+- Service consolidation onto the shared event-log client
 
 Asset alert delivery is not part of v2.5. It remains planned for the later
 automation milestone because it requires additional monitoring and delivery
@@ -159,4 +146,4 @@ infrastructure.
 - **Source code:** [github.com/ledgervibes/qubicpulse](https://github.com/ledgervibes/qubicpulse)
 - **Telegram bot:** [@qubic_pulse_bot](https://t.me/qubic_pulse_bot)
 
-**Last updated:** 2026-08-10
+**Last updated:** 2026-08-11
