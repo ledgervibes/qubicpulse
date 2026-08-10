@@ -1,27 +1,6 @@
-import { QUBIC_QUERY_RPC_URL } from "../utils/constants";
+import { getEventLogs } from "./qubic-rpc";
 
-interface AssetEvent {
-  epoch: number;
-  tickNumber: number;
-  timestamp: string;
-  transactionHash: string;
-  logType: number;
-  logId: string;
-  assetIssuance?: {
-    assetIssuer: string;
-    numberOfShares: string;
-    managingContractIndex: string;
-    assetName: string;
-    numberOfDecimalPlaces: number;
-  };
-  assetPossessionChange?: {
-    source: string;
-    destination: string;
-    assetIssuer: string;
-    assetName: string;
-    numberOfShares: string;
-  };
-}
+const TRANSFER_LOG_TYPE = "3";
 
 interface AssetInfo {
   name: string;
@@ -30,25 +9,12 @@ interface AssetInfo {
   holders: number;
 }
 
-async function queryEventLogs(
-  filters: Record<string, string>,
-  limit: number = 100
-): Promise<AssetEvent[]> {
-  const res = await fetch(`${QUBIC_QUERY_RPC_URL}/getEventLogs`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      filters,
-      pagination: { offset: 0, size: limit },
-    }),
-  });
-  if (!res.ok) throw new Error(`Query RPC error: ${res.status}`);
-  const data = await res.json();
-  return data.eventLogs ?? [];
-}
-
 export async function getIssuedAssets(): Promise<AssetInfo[]> {
-  const events = await queryEventLogs({ logType: "1", managingContractIndex: "1" }, 100);
+  const events = await getEventLogs(
+    { logType: "1", managingContractIndex: "1" },
+    100,
+    0
+  );
 
   const assets: AssetInfo[] = [];
   const seen = new Set<string>();
@@ -72,15 +38,15 @@ export async function getIssuedAssets(): Promise<AssetInfo[]> {
 
 export async function getRecentAssetTransfers(
   limit: number = 100
-): Promise<AssetEvent[]> {
-  return queryEventLogs({ logType: "3" }, limit);
+) {
+  return getEventLogs({ logType: TRANSFER_LOG_TYPE }, limit, 0);
 }
 
 export async function getAssetTransfersByName(
   assetName: string,
   limit: number = 100
-): Promise<AssetEvent[]> {
-  return queryEventLogs({ logType: "3", assetName }, limit);
+) {
+  return getEventLogs({ logType: TRANSFER_LOG_TYPE, assetName }, limit, 0);
 }
 
 export async function getAssetTransferStats(): Promise<

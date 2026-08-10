@@ -7,6 +7,7 @@ import {
   formatTick,
   formatCompact,
   timeAgo,
+  formatEventTimestamp,
 } from "./format";
 
 describe("formatBalance", () => {
@@ -76,6 +77,23 @@ describe("formatTick", () => {
 describe("formatCompact", () => {
   it("formats large numbers", () => {
     expect(formatCompact(1500000)).toBe("1.5M");
+  });
+});
+
+describe("formatEventTimestamp", () => {
+  it("parses millisecond string timestamps from event logs", () => {
+    expect(formatEventTimestamp("1785955349000")).toBe("Aug 5, 2026");
+  });
+
+  it("parses ISO timestamps", () => {
+    expect(formatEventTimestamp("2026-01-05T00:00:00.000Z")).toBe(
+      "Jan 5, 2026"
+    );
+  });
+
+  it("returns a dash for invalid timestamps", () => {
+    expect(formatEventTimestamp("")).toBe("—");
+    expect(formatEventTimestamp("not-a-date")).toBe("—");
   });
 });
 

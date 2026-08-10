@@ -92,6 +92,13 @@ export interface EventLog {
     destination: string;
     amount: string;
   };
+  assetIssuance?: {
+    assetIssuer: string;
+    numberOfShares: string;
+    managingContractIndex: string;
+    assetName: string;
+    numberOfDecimalPlaces: number;
+  };
   assetPossessionChange?: {
     source: string;
     destination: string;

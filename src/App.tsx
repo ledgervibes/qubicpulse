@@ -8,6 +8,8 @@ const Alerts = lazy(() => import("./pages/Alerts").then((module) => ({ default: 
 const Defi = lazy(() => import("./pages/Defi").then((module) => ({ default: module.Defi })));
 const Staking = lazy(() => import("./pages/Staking").then((module) => ({ default: module.Staking })));
 const Settings = lazy(() => import("./pages/Settings").then((module) => ({ default: module.Settings })));
+const Tokens = lazy(() => import("./pages/Tokens").then((module) => ({ default: module.Tokens })));
+const TokenDetail = lazy(() => import("./pages/TokenDetail").then((module) => ({ default: module.TokenDetail })));
 
 function PageFallback() {
   return (
@@ -28,6 +30,8 @@ export default function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/tokens" element={<Tokens />} />
+            <Route path="/tokens/:name" element={<TokenDetail />} />
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/defi" element={<Defi />} />
             <Route path="/staking" element={<Staking />} />

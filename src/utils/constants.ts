@@ -20,6 +20,7 @@ export const TIP_ADDRESS =
 export const NAV_ITEMS = [
   { path: "/", label: "Dashboard", icon: "LayoutDashboard" },
   { path: "/portfolio", label: "Portfolio", icon: "Wallet" },
+  { path: "/tokens", label: "Tokens", icon: "Coins" },
   { path: "/alerts", label: "Alerts", icon: "Bell" },
   { path: "/defi", label: "DeFi", icon: "BarChart3" },
   { path: "/staking", label: "Staking", icon: "Lock" },

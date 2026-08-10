@@ -50,3 +50,18 @@ export function timeAgo(timestamp: number): string {
   if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
   return `${Math.floor(seconds / 86400)}d ago`;
 }
+
+export function formatEventTimestamp(timestamp: string): string {
+  if (!timestamp) return "—";
+  const numeric = Number(timestamp);
+  const date = Number.isFinite(numeric)
+    ? new Date(numeric)
+    : new Date(timestamp);
+  if (isNaN(date.getTime())) return "—";
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
