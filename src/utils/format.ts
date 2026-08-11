@@ -43,6 +43,20 @@ export function formatCompact(value: number): string {
   }).format(value);
 }
 
+export function formatQuPrice(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) {
+    return "—";
+  }
+  if (value === 0) return "0 QU";
+  if (value >= 1e9) return `${(value / 1e9).toFixed(2)}B QU`;
+  if (value >= 1e6) return `${(value / 1e6).toFixed(2)}M QU`;
+  if (value >= 1e3) return `${(value / 1e3).toFixed(2)}K QU`;
+  if (value >= 1) {
+    return `${value.toLocaleString("en-US", { maximumFractionDigits: 2 })} QU`;
+  }
+  return `${value.toLocaleString("en-US", { maximumFractionDigits: 4 })} QU`;
+}
+
 export function timeAgo(timestamp: number): string {
   const seconds = Math.floor(Date.now() / 1000 - timestamp);
   if (seconds < 60) return "just now";
@@ -51,7 +65,7 @@ export function timeAgo(timestamp: number): string {
   return `${Math.floor(seconds / 86400)}d ago`;
 }
 
-export function formatEventTimestamp(timestamp: string): string {
+export function formatEventTimestamp(timestamp: string | null | undefined): string {
   if (!timestamp) return "—";
   const numeric = Number(timestamp);
   const date = Number.isFinite(numeric)

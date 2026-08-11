@@ -1,5 +1,6 @@
 export const QUBIC_RPC_URL = "https://rpc.qubic.org";
 export const QUBIC_QUERY_RPC_URL = "https://rpc.qubic.org/query/v1";
+export const QUBIC_LIVE_RPC_URL = "https://rpc.qubic.org/live/v1";
 
 export const COINGECKO_API_URL = "https://api.coingecko.com/api/v3";
 
@@ -8,6 +9,7 @@ export const QUBIC_COINGECKO_ID = "qubic-network";
 export const CMC_API_URL = import.meta.env.VITE_CMC_API_URL as
   | string
   | undefined;
+export const QUBIC_API_URL = CMC_API_URL;
 export const TELEGRAM_BOT_USERNAME = "qubic_pulse_bot";
 
 export const QUBIC_ADDRESS_REGEX = /^[A-Z]{60}$/;

@@ -1,15 +1,13 @@
 import { getEventLogs } from "./qubic-rpc";
 import type { EventLog } from "./qubic-rpc";
+import { QUBIC_LIVE_RPC_URL } from "../utils/constants";
 
 export interface QubicAsset {
   name: string;
   issuer: string;
-  totalSupply: number;
+  totalSupply: number | null;
   decimals: number;
-  firstSeenTick: number;
-  firstSeenTimestamp: string;
-  transferCount: number;
-  source: "rpc";
+  universeIndex: number;
 }
 
 export interface AssetWithActivity extends QubicAsset {
@@ -17,74 +15,89 @@ export interface AssetWithActivity extends QubicAsset {
   volume: number;
 }
 
-const ISSUANCE_LOG_TYPE = "1";
 const TRANSFER_LOG_TYPE = "3";
-const QX_MANAGING_CONTRACT = "1";
 
-const batchSize = 100;
+interface LiveIssuanceItem {
+  data: {
+    issuerIdentity: string;
+    type: number;
+    name: string;
+    numberOfDecimalPlaces: number;
+    unitOfMeasurement: number[];
+  };
+  tick: number;
+  universeIndex: number;
+}
+
+interface LiveOwnershipItem {
+  data: {
+    ownerIdentity: string;
+    type: number;
+    numberOfUnits: string;
+  };
+  tick: number;
+  universeIndex: number;
+}
 
 function sharesNumber(value: string | undefined): number {
   const n = Number(value ?? "0");
   return Number.isFinite(n) ? n : 0;
 }
 
-function toAsset(event: EventLog): QubicAsset | null {
-  const issuance = event.assetIssuance;
-  if (!issuance?.assetName) return null;
+async function fetchLiveIssuances(): Promise<LiveIssuanceItem[]> {
+  const res = await fetch(`${QUBIC_LIVE_RPC_URL}/assets/issuances`);
+  if (!res.ok) throw new Error(`Live API error: ${res.status}`);
+  const data = await res.json();
+  return data?.assets ?? [];
+}
+
+function fromLiveItem(item: LiveIssuanceItem): QubicAsset {
   return {
-    name: issuance.assetName,
-    issuer: issuance.assetIssuer,
-    totalSupply: sharesNumber(issuance.numberOfShares),
-    decimals: issuance.numberOfDecimalPlaces ?? 0,
-    firstSeenTick: event.tickNumber,
-    firstSeenTimestamp: event.timestamp,
-    transferCount: 0,
-    source: "rpc",
+    name: item.data.name,
+    issuer: item.data.issuerIdentity,
+    totalSupply: null,
+    decimals: item.data.numberOfDecimalPlaces ?? 0,
+    universeIndex: item.universeIndex,
   };
 }
 
-export async function getAllIssuedAssets(
-  maxAssets: number = 2000
-): Promise<QubicAsset[]> {
-  const filters = {
-    logType: ISSUANCE_LOG_TYPE,
-    managingContractIndex: QX_MANAGING_CONTRACT,
-  };
-  const assetsMap = new Map<string, QubicAsset>();
+export async function getAllIssuedAssets(): Promise<QubicAsset[]> {
+  const items = await fetchLiveIssuances();
+  const assets = items.map(fromLiveItem);
 
-  for (let offset = 0; offset < maxAssets; offset += batchSize) {
-    const events = await getEventLogs(filters, batchSize, offset);
-    if (events.length === 0) break;
-
-    for (const event of events) {
-      const asset = toAsset(event);
-      if (asset && !assetsMap.has(asset.name)) {
-        assetsMap.set(asset.name, asset);
-      }
-    }
-
-    if (events.length < batchSize) break;
-  }
-
-  return Array.from(assetsMap.values()).sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
+  return assets.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function getAssetByName(
   assetName: string
 ): Promise<QubicAsset | null> {
-  const events = await getEventLogs(
-    {
-      logType: ISSUANCE_LOG_TYPE,
-      managingContractIndex: QX_MANAGING_CONTRACT,
-      assetName,
-    },
-    1,
-    0
+  const items = await fetchLiveIssuances();
+  const found = items.find(
+    (item) =>
+      item.data.name.toUpperCase() === assetName.trim().toUpperCase()
   );
+  return found ? fromLiveItem(found) : null;
+}
 
-  return events[0] ? toAsset(events[0]) : null;
+export async function getAssetTotalSupply(
+  assetName: string,
+  issuer: string
+): Promise<number | null> {
+  const url = new URL(`${QUBIC_LIVE_RPC_URL}/assets/ownerships`);
+  url.searchParams.set("issuerIdentity", issuer);
+  url.searchParams.set("assetName", assetName);
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Live API error: ${res.status}`);
+  const data = await res.json();
+  const items: LiveOwnershipItem[] = data?.assets ?? [];
+
+  let total = 0;
+  for (const item of items) {
+    const units = Number(item.data.numberOfUnits);
+    if (Number.isFinite(units) && units > 0) total += units;
+  }
+  return total > 0 ? total : null;
 }
 
 export async function getAssetRecentTransfers(
@@ -94,37 +107,16 @@ export async function getAssetRecentTransfers(
   return getEventLogs({ logType: TRANSFER_LOG_TYPE, assetName }, limit, 0);
 }
 
-export async function getAssetTransfersByIssuer(
-  issuer: string,
-  limit: number = 100
-): Promise<EventLog[]> {
-  return getEventLogs({ logType: TRANSFER_LOG_TYPE, assetIssuer: issuer }, limit, 0);
-}
-
 export async function getRecentlyIssuedAssets(
   limit: number = 20
 ): Promise<QubicAsset[]> {
-  const events = await getEventLogs(
-    {
-      logType: ISSUANCE_LOG_TYPE,
-      managingContractIndex: QX_MANAGING_CONTRACT,
-    },
-    limit,
-    0
-  );
+  const items = await fetchLiveIssuances();
+  const assets = items.map(fromLiveItem);
 
-  const seen = new Set<string>();
-  const assets: QubicAsset[] = [];
-
-  for (const event of events) {
-    const asset = toAsset(event);
-    if (asset && !seen.has(asset.name)) {
-      seen.add(asset.name);
-      assets.push(asset);
-    }
-  }
-
-  return assets;
+  return assets
+    .slice()
+    .sort((a, b) => b.universeIndex - a.universeIndex)
+    .slice(0, limit);
 }
 
 export async function getAssetListWithActivity(

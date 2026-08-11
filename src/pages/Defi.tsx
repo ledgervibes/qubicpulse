@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { usePriceStore } from "../stores/priceStore";
 import {
-  formatBalance,
   formatCompact,
   formatCurrency,
   formatPercent,
 } from "../utils/format";
 import {
   Activity,
-  ArrowRight,
   BarChart3,
   Clock,
   ExternalLink,
@@ -21,7 +19,6 @@ import {
 } from "lucide-react";
 import type { PriceHistory } from "../types";
 import { getPriceHistory } from "../services/coingecko";
-import { getTopAssets } from "../services/qx-contract";
 import * as rpc from "../services/qubic-rpc";
 import {
   Area,
@@ -32,12 +29,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-
-interface TopAsset {
-  name: string;
-  transfers: number;
-  volume: number;
-}
 
 type LoadState = "loading" | "ready" | "error";
 
@@ -76,9 +67,6 @@ export function Defi() {
     currentTick: number;
     epoch: number;
   } | null>(null);
-  const [topAssets, setTopAssets] = useState<TopAsset[]>([]);
-  const [assetState, setAssetState] = useState<LoadState>("loading");
-  const [showAllAssets, setShowAllAssets] = useState(false);
 
   useEffect(() => {
     getPriceHistory(7)
@@ -89,13 +77,6 @@ export function Defi() {
       .catch(() => setVolumeState("error"));
 
     rpc.getStatus().then(setTickInfo).catch(() => {});
-
-    getTopAssets()
-      .then((assets) => {
-        setTopAssets(assets);
-        setAssetState("ready");
-      })
-      .catch(() => setAssetState("error"));
   }, []);
 
   const volumeData =
@@ -109,8 +90,6 @@ export function Defi() {
 
   const latestVolume = volumeData.at(-1)?.volume;
   const pricePositive = (price?.usd_24h_change ?? 0) >= 0;
-  const visibleAssets = topAssets.slice(0, showAllAssets ? 20 : 8);
-  const maxTransfers = Math.max(...topAssets.map((asset) => asset.transfers), 1);
   const marketUpdatedLabel = lastFetched
     ? new Date(lastFetched).toLocaleTimeString("en-US", {
         hour: "2-digit",
@@ -130,7 +109,7 @@ export function Defi() {
             What is moving on Qubic?
           </h1>
           <p className="mt-2 text-sm text-text-muted sm:text-base">
-            Market context, recent QX activity, and live network position.
+            Market context and live network position.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-text-muted">
@@ -223,100 +202,6 @@ export function Defi() {
             </div>
           </div>
         </div>
-      </section>
-
-      <section className="data-surface overflow-hidden" aria-labelledby="top-assets-title">
-        <div className="flex flex-col gap-3 border-b border-white/5 p-4 sm:flex-row sm:items-end sm:justify-between sm:p-5">
-          <div>
-            <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-qubic-gold">
-              QX activity sample
-            </div>
-            <h2 id="top-assets-title" className="font-heading text-xl font-semibold text-text-primary">
-              Most active recent assets
-            </h2>
-            <p className="mt-1 text-xs leading-5 text-text-muted">
-              Ranked by transfer count across the latest sampled QX asset events, not a 24-hour window.
-            </p>
-          </div>
-          {topAssets.length > 8 && (
-            <button
-              onClick={() => setShowAllAssets(!showAllAssets)}
-              className="btn-secondary min-h-10 self-start px-3 sm:self-auto"
-              aria-expanded={showAllAssets}
-            >
-              {showAllAssets ? "Show less" : "View all"}
-              <ArrowRight className={`h-3.5 w-3.5 transition-transform ${showAllAssets ? "rotate-90" : ""}`} />
-            </button>
-          )}
-        </div>
-
-        {assetState === "loading" ? (
-          <div className="flex items-center justify-center gap-3 py-14 text-sm text-text-muted">
-            <Loader2 className="h-5 w-5 animate-spin text-qubic-cyan" />
-            Reading recent QX activity
-          </div>
-        ) : assetState === "error" ? (
-          <div className="px-5 py-12 text-center">
-            <p className="text-sm text-warning">Recent QX asset activity is temporarily unavailable.</p>
-            <p className="mt-2 text-xs text-text-muted">Market and network data above can still be used independently.</p>
-          </div>
-        ) : topAssets.length === 0 ? (
-          <div className="px-5 py-12 text-center text-sm text-text-muted">
-            No recent QX asset transfers were returned.
-          </div>
-        ) : (
-          <div className="divide-y divide-white/5">
-            <div className="hidden grid-cols-[48px_1fr_160px_180px] gap-4 px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-text-muted md:grid">
-              <span>Rank</span>
-              <span>Asset</span>
-              <span className="text-right">Recent transfers</span>
-              <span className="text-right">Transferred units</span>
-            </div>
-            {visibleAssets.map((asset, index) => (
-              <div
-                key={asset.name}
-                className="grid gap-3 px-4 py-4 transition-colors hover:bg-bg-elevated/25 sm:px-5 md:grid-cols-[48px_1fr_160px_180px] md:items-center md:gap-4"
-              >
-                <div className="hidden font-mono text-sm text-text-muted md:block">
-                  {String(index + 1).padStart(2, "0")}
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-qubic-gold/10 ring-1 ring-qubic-gold/15">
-                      <span className="text-[10px] font-bold uppercase text-qubic-gold">
-                        {asset.name.slice(0, 2)}
-                      </span>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="truncate text-sm font-semibold text-text-primary">
-                          {asset.name}
-                        </span>
-                        <span className="font-mono text-xs text-text-muted md:hidden">
-                          #{index + 1}
-                        </span>
-                      </div>
-                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-bg-deep/70">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-qubic-cyan-dark to-qubic-cyan"
-                          style={{ width: `${Math.max(6, (asset.transfers / maxTransfers) * 100)}%` }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between text-sm md:block md:text-right">
-                  <span className="text-xs text-text-muted md:hidden">Recent transfers</span>
-                  <span className="font-mono text-text-secondary">{asset.transfers.toLocaleString()}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm md:block md:text-right">
-                  <span className="text-xs text-text-muted md:hidden">Transferred units</span>
-                  <span className="font-mono text-text-secondary">{formatBalance(asset.volume)}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </section>
 
       <section className="chart-container" aria-labelledby="volume-title">

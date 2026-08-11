@@ -94,7 +94,9 @@ VITE_CMC_API_URL=https://your-price-proxy.example
 ```
 
 `VITE_CMC_API_URL` points to the server-side CoinMarketCap proxy. The actual
-CoinMarketCap key must only exist as a Cloudflare Worker secret.
+CoinMarketCap key must only exist as a Cloudflare Worker secret. The same
+worker exposes `/orderbook`, a cached QX orderbook proxy, so the token list and
+detail pages do not hit `rpc.qubic.org` directly (which rate-limits hard).
 
 ## Quality Checks
 

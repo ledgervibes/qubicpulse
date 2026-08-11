@@ -8,19 +8,20 @@ import {
   Coins,
   ExternalLink,
   Hash,
-  Layers,
   RefreshCw,
   Star,
   User,
 } from "lucide-react";
 import { useAssetStore } from "../stores/assetStore";
+import { useOrderbookStore } from "../stores/orderbookStore";
 import type { QubicAsset } from "../services/assets";
 import type { EventLog } from "../services/qubic-rpc";
+import { OrderbookDepthChart } from "../components/tokens/OrderbookDepthChart";
 import {
   formatAddress,
   formatBalance,
   formatEventTimestamp,
-  formatTick,
+  formatQuPrice,
 } from "../utils/format";
 
 interface AssetDetail {
@@ -43,6 +44,17 @@ export function TokenDetail() {
   const [state, setState] = useState<LoadState>("loading");
   const [error, setError] = useState<string | null>(null);
   const [detail, setDetail] = useState<AssetDetail | null>(null);
+
+  const orderbook = useOrderbookStore((s) =>
+    detail?.asset ? s.orderbooks[detail.asset.name.toUpperCase()] : undefined
+  );
+  const fetchOrderbook = useOrderbookStore((s) => s.fetchOrderbook);
+
+  useEffect(() => {
+    if (detail?.asset) {
+      fetchOrderbook(detail.asset.name, detail.asset.issuer);
+    }
+  }, [detail?.asset, fetchOrderbook]);
 
   useEffect(() => {
     let cancelled = false;
@@ -186,7 +198,7 @@ export function TokenDetail() {
             className="data-surface p-5 sm:p-6"
             aria-label="Asset information"
           >
-            <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-bg-hover bg-bg-hover lg:grid-cols-4">
+            <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-bg-hover bg-bg-hover lg:grid-cols-3">
               <div className="bg-bg-elevated p-4">
                 <dt className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.13em] text-text-muted">
                   <User className="h-3 w-3" />
@@ -199,10 +211,12 @@ export function TokenDetail() {
               <div className="bg-bg-elevated p-4">
                 <dt className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.13em] text-text-muted">
                   <Coins className="h-3 w-3" />
-                  Issued supply
+                  Total supply
                 </dt>
                 <dd className="mt-2 font-mono text-sm text-text-primary">
-                  {formatBalance(asset.totalSupply)}
+                  {asset.totalSupply != null
+                    ? formatBalance(asset.totalSupply)
+                    : "—"}
                 </dd>
               </div>
               <div className="bg-bg-elevated p-4">
@@ -214,35 +228,65 @@ export function TokenDetail() {
                   {asset.decimals}
                 </dd>
               </div>
-              <div className="bg-bg-elevated p-4">
-                <dt className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.13em] text-text-muted">
-                  <Layers className="h-3 w-3" />
-                  First seen
-                </dt>
-                <dd className="mt-2 text-sm text-text-secondary">
-                  Tick {formatTick(asset.firstSeenTick)}
-                  <span className="mt-1 block text-xs text-text-muted">
-                    {formatEventTimestamp(asset.firstSeenTimestamp)}
-                  </span>
-                </dd>
-              </div>
             </dl>
           </section>
 
           <section
-            className="data-surface flex items-start gap-3 border-dashed border-bg-hover p-5 text-sm"
-            aria-label="Price availability"
+            className="data-surface p-5 sm:p-6"
+            aria-label="Orderbook price"
           >
-            <CircleAlert className="h-5 w-5 flex-shrink-0 text-text-disabled" />
-            <div>
-              <div className="font-medium text-text-primary">
-                Price and market data unavailable
+            <div className="mb-1 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-qubic-gold">
+              <ArrowDownUp className="h-3 w-3" />
+              Orderbook price
+            </div>
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <div className="text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
+                  {orderbook
+                    ? formatQuPrice(orderbook.midPrice)
+                    : "Loading…"}
+                </div>
+                <p className="mt-1 text-xs text-text-muted">
+                  Mid price from live QX orders (QU per share)
+                </p>
               </div>
-              <p className="mt-1 text-xs leading-5 text-text-muted">
-                QubicPulse only shows price, holder counts, or historical charts
-                when a reliable verified source exists. No such source is
-                available for this asset yet.
-              </p>
+              <dl className="grid grid-cols-3 gap-x-6 gap-y-2 text-right">
+                <div>
+                  <dt className="text-[10px] font-semibold uppercase tracking-[0.13em] text-text-muted">
+                    Best bid
+                  </dt>
+                  <dd className="mt-1 text-sm tabular-nums text-text-primary">
+                    {orderbook ? formatQuPrice(orderbook.bestBid) : "—"}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-[10px] font-semibold uppercase tracking-[0.13em] text-text-muted">
+                    Best ask
+                  </dt>
+                  <dd className="mt-1 text-sm tabular-nums text-text-primary">
+                    {orderbook ? formatQuPrice(orderbook.bestAsk) : "—"}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-[10px] font-semibold uppercase tracking-[0.13em] text-text-muted">
+                    Spread
+                  </dt>
+                  <dd className="mt-1 text-sm tabular-nums text-text-primary">
+                    {orderbook && orderbook.bestBid !== null && orderbook.bestAsk !== null
+                      ? formatQuPrice(orderbook.bestAsk - orderbook.bestBid)
+                      : "—"}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+            <div className="mt-5">
+              {orderbook ? (
+                <OrderbookDepthChart orderbook={orderbook} />
+              ) : (
+                <div className="flex h-64 items-center justify-center text-sm text-text-muted">
+                  Fetching orderbook…
+                </div>
+              )}
             </div>
           </section>
 
@@ -344,8 +388,8 @@ export function TokenDetail() {
 
           <p className="text-xs leading-5 text-text-muted">
             Activity is reconstructed from a recent sample of Qubic Event Logs
-            and can lag the live network. Supply reflects the issuance event, not
-            current circulation.
+            and can lag the live network. Supply reflects the current on-chain
+            ownership totals.
           </p>
         </>
       )}

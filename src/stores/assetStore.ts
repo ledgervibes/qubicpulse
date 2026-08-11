@@ -5,6 +5,7 @@ import {
   getAssetByName,
   getAssetListWithActivity,
   getAssetRecentTransfers,
+  getAssetTotalSupply,
   getRecentlyIssuedAssets,
 } from "../services/assets";
 import * as storage from "../services/storage";
@@ -110,8 +111,20 @@ export const useAssetStore = create<AssetStore>((set, get) => ({
       const asset = await getAssetByName(assetName);
       if (!asset) return null;
 
-      const transfers = await getAssetRecentTransfers(assetName, 50);
-      const detail: AssetDetail = { asset, transfers, loadedAt: Date.now() };
+      const [transfers, supply] = await Promise.all([
+        getAssetRecentTransfers(assetName, 50),
+        getAssetTotalSupply(assetName, asset.issuer).catch(() => null),
+      ]);
+
+      const enriched: QubicAsset = {
+        ...asset,
+        totalSupply: supply ?? asset.totalSupply,
+      };
+      const detail: AssetDetail = {
+        asset: enriched,
+        transfers,
+        loadedAt: Date.now(),
+      };
 
       const newCache = new Map(cache);
       newCache.set(assetName, detail);

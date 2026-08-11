@@ -10,19 +10,12 @@ import {
   CircleAlert,
 } from "lucide-react";
 import { useAssetStore } from "../stores/assetStore";
-import { formatEventTimestamp } from "../utils/format";
+import { useOrderbookStore } from "../stores/orderbookStore";
+import { formatQuPrice } from "../utils/format";
 
 function shortenAddress(addr: string): string {
   if (!addr || addr.length <= 16) return addr;
   return `${addr.slice(0, 8)}…${addr.slice(-8)}`;
-}
-
-function formatNumber(n: number): string {
-  if (!Number.isFinite(n)) return "—";
-  if (n >= 1e9) return `${(n / 1e9).toFixed(2)}B`;
-  if (n >= 1e6) return `${(n / 1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `${(n / 1e3).toFixed(2)}K`;
-  return n.toLocaleString();
 }
 
 export function Tokens() {
@@ -43,6 +36,9 @@ export function Tokens() {
     toggleWatchlist,
     loadWatchlist,
   } = useAssetStore();
+
+  const orderbooks = useOrderbookStore((s) => s.orderbooks);
+  const loadOrderbooks = useOrderbookStore((s) => s.loadOrderbooks);
 
   useEffect(() => {
     loadWatchlist();
@@ -67,12 +63,16 @@ export function Tokens() {
     if (sortBy === "name") {
       sorted.sort((a, b) => a.name.localeCompare(b.name));
     } else if (sortBy === "recent") {
-      sorted.sort((a, b) => b.firstSeenTick - a.firstSeenTick);
+      sorted.sort((a, b) => b.universeIndex - a.universeIndex);
     } else {
       sorted.sort((a, b) => b.recentTransfers - a.recentTransfers);
     }
     return sorted;
   }, [assets, searchQuery, sortBy, showWatchlistOnly, watchlist]);
+
+  useEffect(() => {
+    loadOrderbooks(filtered.map((a) => ({ name: a.name, issuer: a.issuer })));
+  }, [loadOrderbooks, filtered]);
 
   return (
     <div className="space-y-5 sm:space-y-6">
@@ -86,7 +86,8 @@ export function Tokens() {
             Token Explorer
           </h1>
           <p className="mt-2 text-sm text-text-muted sm:text-base">
-            Assets issued on Qubic, reconstructed from on-chain issuance events.
+            Assets issued on Qubic, sourced from the network's live asset
+            registry.
           </p>
         </div>
         <button
@@ -177,8 +178,8 @@ export function Tokens() {
 
       {!loading && !error && assets.length === 0 && (
         <div className="data-surface p-12 text-center text-text-muted">
-          No assets discovered yet. Qubic issuance events will appear here once
-          fetched.
+          No assets discovered yet. Qubic's asset registry has not returned any
+          issued assets.
         </div>
       )}
 
@@ -218,13 +219,7 @@ export function Tokens() {
                     Recent transfers
                   </th>
                   <th className="px-4 py-3 text-right font-semibold" scope="col">
-                    Total Supply
-                  </th>
-                  <th className="px-4 py-3 text-right font-semibold" scope="col">
-                    Decimals
-                  </th>
-                  <th className="px-4 py-3 font-semibold" scope="col">
-                    First seen
+                    Price (QU)
                   </th>
                   <th className="px-4 py-3 text-right font-semibold" scope="col">
                     <span className="sr-only">Actions</span>
@@ -253,14 +248,8 @@ export function Tokens() {
                       <td className="px-4 py-3 text-right tabular-nums text-text-secondary">
                         {asset.recentTransfers.toLocaleString()}
                       </td>
-                      <td className="px-4 py-3 text-right tabular-nums text-text-secondary">
-                        {formatNumber(asset.totalSupply)}
-                      </td>
                       <td className="px-4 py-3 text-right tabular-nums text-text-muted">
-                        {asset.decimals}
-                      </td>
-                      <td className="px-4 py-3 text-xs text-text-muted">
-                        {formatEventTimestamp(asset.firstSeenTimestamp)}
+                        {formatQuPrice(orderbooks[asset.name.toUpperCase()]?.midPrice)}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <button

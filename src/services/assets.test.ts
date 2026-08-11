@@ -3,33 +3,42 @@ import {
   getAllIssuedAssets,
   getAssetRecentTransfers,
   getAssetListWithActivity,
+  getAssetTotalSupply,
 } from "./assets";
 
-function issuanceEvent(
+const LIVING_ISSUER = "ISSUERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
+function liveIssuance(
+  name: string,
+  universeIndex: number,
   overrides: Partial<{
-    assetName: string;
-    assetIssuer: string;
-    numberOfShares: string;
-    numberOfDecimalPlaces: number;
-    tickNumber: number;
-    timestamp: string;
-    logId: string;
-  }>
+    issuer: string;
+    decimals: number;
+    tick: number;
+  }> = {}
 ) {
   return {
-    epoch: 1,
-    tickNumber: overrides.tickNumber ?? 1000,
-    timestamp: overrides.timestamp ?? "2026-01-01T00:00:00.000Z",
-    transactionHash: "TX",
-    logType: 1,
-    logId: overrides.logId ?? "log-1",
-    assetIssuance: {
-      assetIssuer: overrides.assetIssuer ?? "ISSUERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-      numberOfShares: overrides.numberOfShares ?? "1000",
-      managingContractIndex: "1",
-      assetName: overrides.assetName ?? "TEST",
-      numberOfDecimalPlaces: overrides.numberOfDecimalPlaces ?? 0,
+    data: {
+      issuerIdentity: overrides.issuer ?? LIVING_ISSUER,
+      type: 1,
+      name,
+      numberOfDecimalPlaces: overrides.decimals ?? 0,
+      unitOfMeasurement: [],
     },
+    tick: overrides.tick ?? 1000,
+    universeIndex,
+  };
+}
+
+function liveOwnership(
+  owner: string,
+  numberOfUnits: string,
+  overrides: Partial<{ type: number; tick: number; universeIndex: number }> = {}
+) {
+  return {
+    data: { ownerIdentity: owner, type: overrides.type ?? 1, numberOfUnits },
+    tick: overrides.tick ?? 1000,
+    universeIndex: overrides.universeIndex ?? 0,
   };
 }
 
@@ -49,43 +58,56 @@ function transferEvent(
     assetPossessionChange: {
       source: other?.source ?? "SENDERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
       destination: other?.destination ?? "RECEIVERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-      assetIssuer: "ISSUERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      assetIssuer: LIVING_ISSUER,
       assetName,
       numberOfShares: shares,
     },
   };
 }
 
-function stubFetch(pages: Array<Record<string, unknown>[]>) {
-  let call = 0;
-  const mock = vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
-    const body = init?.body ? JSON.parse(String(init.body)) : {};
-    const filterLog = body.filters?.logType;
-    const isTransfer = filterLog === "3";
-    const limit = body.pagination?.size ?? 100;
-    const page = pages[call++ % pages.length] ?? [];
-    if (filterLog === "1" && !isTransfer) {
-      const filters = body.filters;
-      if (filters.assetName) {
-        return {
-          ok: true,
-          json: async () => ({
-            eventLogs: page.filter(
-              (e: any) => e.assetIssuance?.assetName === filters.assetName
-            ),
-          }),
-        };
+function stubFetch(opts: {
+  liveIssuances?: unknown[];
+  liveOwnerships?: unknown[];
+  queryPages?: Array<Record<string, unknown>[]>;
+}) {
+  const calls: string[] = [];
+  const mock = vi.fn(
+    async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      calls.push(url);
+
+      if (url.includes("/live/v1")) {
+        if (url.includes("assets/ownerships")) {
+          return {
+            ok: true,
+            json: async () => ({ assets: opts.liveOwnerships ?? [] }),
+          };
+        }
+        if (url.includes("assets/issuances")) {
+          return {
+            ok: true,
+            json: async () => ({ assets: opts.liveIssuances ?? [] }),
+          };
+        }
+        throw new Error(`Unexpected live URL: ${url}`);
       }
+
+      const pages = opts.queryPages ?? [];
+      let call = 0;
+      for (const u of calls) {
+        if (!u.includes("/live/v1")) call += 1;
+      }
+      const index = Math.max(0, call - 1);
+      const page = pages[index % pages.length] ?? [];
+
+      const body = init?.body ? JSON.parse(String(init.body)) : {};
+      const limit = body.pagination?.size ?? 100;
       return {
         ok: true,
         json: async () => ({ eventLogs: page.slice(0, limit) }),
       };
     }
-    return {
-      ok: true,
-      json: async () => ({ eventLogs: page.slice(0, limit) }),
-    };
-  });
+  );
   vi.stubGlobal("fetch", mock);
   return mock;
 }
@@ -100,40 +122,50 @@ afterEach(() => {
 
 describe("assets service", () => {
   describe("getAllIssuedAssets", () => {
-    it("returns deduplicated assets sorted by name", async () => {
-      const page1 = [
-        issuanceEvent({ assetName: "ALPHA", numberOfShares: "1000" }),
-        issuanceEvent({ assetName: "BETA", numberOfShares: "2000", tickNumber: 900 }),
-        issuanceEvent({ assetName: "ALPHA", numberOfShares: "9999", logId: "dup" }),
-      ];
-      stubFetch([page1]);
+    it("returns live assets sorted by name", async () => {
+      stubFetch({
+        liveIssuances: [liveIssuance("ZETA", 7), liveIssuance("ALPHA", 5)],
+      });
 
       const assets = await getAllIssuedAssets();
 
       expect(assets).toHaveLength(2);
       expect(assets[0].name).toBe("ALPHA");
-      expect(assets[0].totalSupply).toBe(1000);
-      expect(assets[0].firstSeenTick).toBe(1000);
-      expect(assets[1].name).toBe("BETA");
-      expect(assets[1].totalSupply).toBe(2000);
+      expect(assets[1].name).toBe("ZETA");
+      expect(assets[0].decimals).toBe(0);
+      expect(assets[0].universeIndex).toBe(5);
+    });
+  });
+
+  describe("getAssetTotalSupply", () => {
+    it("sums positive ownership shares", async () => {
+      stubFetch({
+        liveOwnerships: [
+          liveOwnership("OWNER1AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "10"),
+          liveOwnership("OWNER2AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "15"),
+          liveOwnership("BURNEDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "0"),
+        ],
+      });
+
+      const supply = await getAssetTotalSupply("ALPHA", LIVING_ISSUER);
+
+      expect(supply).toBe(25);
     });
 
-    it("stops paginating after an empty page", async () => {
-      const fullPage = Array.from({ length: 100 }, (_, i) =>
-        issuanceEvent({ assetName: `A${String(i).padStart(3, "0")}`, logId: `l${i}` })
-      );
-      const fetchMock = stubFetch([fullPage, []]);
+    it("returns null when no positive ownership exists", async () => {
+      stubFetch({ liveOwnerships: [] });
 
-      const assets = await getAllIssuedAssets();
+      const supply = await getAssetTotalSupply("ALPHA", LIVING_ISSUER);
 
-      expect(assets).toHaveLength(100);
-      expect(fetchMock.mock.calls.length).toBe(2);
+      expect(supply).toBeNull();
     });
   });
 
   describe("getAssetRecentTransfers", () => {
     it("returns possession change events for the asset", async () => {
-      stubFetch([[transferEvent("ABC", "50", "t1")]]);
+      stubFetch({
+        queryPages: [[transferEvent("ABC", "50", "t1")]],
+      });
 
       const events = await getAssetRecentTransfers("ABC");
 
@@ -145,17 +177,16 @@ describe("assets service", () => {
 
   describe("getAssetListWithActivity", () => {
     it("counts recent transfers and volume per asset", async () => {
-      stubFetch([
-        [
-          issuanceEvent({ assetName: "AAA", tickNumber: 800 }),
-          issuanceEvent({ assetName: "BBB", tickNumber: 900 }),
+      stubFetch({
+        liveIssuances: [liveIssuance("AAA", 1), liveIssuance("BBB", 2)],
+        queryPages: [
+          [
+            transferEvent("AAA", "10", "t1"),
+            transferEvent("AAA", "15", "t2"),
+            transferEvent("BBB", "5", "t3"),
+          ],
         ],
-        [
-          transferEvent("AAA", "10", "t1"),
-          transferEvent("AAA", "15", "t2"),
-          transferEvent("BBB", "5", "t3"),
-        ],
-      ]);
+      });
 
       const assets = await getAssetListWithActivity();
 

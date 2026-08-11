@@ -8,6 +8,7 @@ import {
   formatCompact,
   timeAgo,
   formatEventTimestamp,
+  formatQuPrice,
 } from "./format";
 
 describe("formatBalance", () => {
@@ -94,6 +95,32 @@ describe("formatEventTimestamp", () => {
   it("returns a dash for invalid timestamps", () => {
     expect(formatEventTimestamp("")).toBe("—");
     expect(formatEventTimestamp("not-a-date")).toBe("—");
+  });
+});
+
+describe("formatQuPrice", () => {
+  it("formats whole QU prices", () => {
+    expect(formatQuPrice(15.5)).toBe("15.5 QU");
+  });
+
+  it("formats thousands with K", () => {
+    expect(formatQuPrice(120001)).toBe("120.00K QU");
+  });
+
+  it("formats millions with M", () => {
+    expect(formatQuPrice(1500000)).toBe("1.50M QU");
+  });
+
+  it("formats billions with B", () => {
+    expect(formatQuPrice(3000000000)).toBe("3.00B QU");
+  });
+
+  it("formats small prices with more decimals", () => {
+    expect(formatQuPrice(0.375)).toBe("0.375 QU");
+  });
+
+  it("formats null as dash", () => {
+    expect(formatQuPrice(null)).toBe("—");
   });
 });
 
