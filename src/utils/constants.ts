@@ -16,6 +16,8 @@ export const QUBIC_ADDRESS_REGEX = /^[A-Z]{60}$/;
 
 export const APP_NAME = "QubicPulse";
 
+export const APP_VERSION = "v2.5";
+
 export const TIP_ADDRESS =
   "GZCNUSHKABXFGBVYDMEDOMXHHIRAPZZSMRYVVEAGDGMKHMCAEHJSZRVGIQPM";
 

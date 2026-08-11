@@ -90,8 +90,10 @@ Qubic without inventing unavailable market data.
 - Recently discovered assets
 - Shareable asset detail routes (`/tokens/:name`) with the issuance record,
   first-seen context, and recent transfer activity linked to the explorer
-- Explicit unavailable states for price, holder counts, and historical charts
-  where no reliable verified source exists
+- QX orderbook prices and depth charts on the token detail view, sourced from
+  the public Qubictrade orderbook
+- Explicit unavailable states for holder counts and historical charts where no
+  reliable verified source exists
 - Browser-local asset watchlist with a watchlist-only filter and per-asset
   toggles on both listing and detail views
 - Service consolidation onto the shared event-log client

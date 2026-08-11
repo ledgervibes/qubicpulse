@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TIP_ADDRESS, APP_NAME, TELEGRAM_BOT_USERNAME } from "../utils/constants";
+import { TIP_ADDRESS, APP_NAME, APP_VERSION, TELEGRAM_BOT_USERNAME } from "../utils/constants";
 import * as storage from "../services/storage";
 import {
   Settings as SettingsIcon,
@@ -209,7 +209,7 @@ export function Settings() {
             <h3 className="font-heading font-semibold text-text-primary">
               About {APP_NAME}
             </h3>
-            <p className="text-xs text-text-muted">v2.0 • All Phases Complete</p>
+            <p className="text-xs text-text-muted">{APP_VERSION}</p>
           </div>
         </div>
         <div className="text-sm text-text-secondary space-y-2">
